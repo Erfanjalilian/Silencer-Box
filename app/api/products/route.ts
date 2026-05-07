@@ -113,19 +113,11 @@ const productsData = [
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const category = searchParams.get('category');
-    const minPrice = searchParams.get('minPrice');
-    const maxPrice = searchParams.get('maxPrice');
-    const inStock = searchParams.get('inStock');
-    const sortBy = searchParams.get('sortBy');
-    const search = searchParams.get('search');
     const getAll = searchParams.get('getAll');
-
-    let filteredProducts = [...productsData];
-
+    
     // If getAll is not true, return best sellers (for homepage)
     if (getAll !== 'true') {
-      const bestSellers = filteredProducts.filter(product => product.isBestSeller === true);
+      const bestSellers = productsData.filter(product => product.isBestSeller === true);
       return NextResponse.json(bestSellers, {
         status: 200,
         headers: {
@@ -133,35 +125,32 @@ export async function GET(request: NextRequest) {
         },
       });
     }
-
-    // Apply category filter
+    
+    // Apply filters for products page
+    const category = searchParams.get('category');
+    const minPrice = searchParams.get('minPrice');
+    const maxPrice = searchParams.get('maxPrice');
+    const inStock = searchParams.get('inStock');
+    const sortBy = searchParams.get('sortBy');
+    
+    let filteredProducts = [...productsData];
+    
     if (category && category !== 'all') {
       filteredProducts = filteredProducts.filter(p => p.category === category);
     }
-
-    // Apply price filter
+    
     if (minPrice) {
       filteredProducts = filteredProducts.filter(p => p.price >= parseInt(minPrice));
     }
+    
     if (maxPrice) {
       filteredProducts = filteredProducts.filter(p => p.price <= parseInt(maxPrice));
     }
-
-    // Apply stock filter
+    
     if (inStock === 'true') {
       filteredProducts = filteredProducts.filter(p => p.inStock === true);
     }
-
-    // Apply search filter
-    if (search) {
-      const searchTerm = search.toLowerCase();
-      filteredProducts = filteredProducts.filter(p => 
-        p.name.toLowerCase().includes(searchTerm) || 
-        p.description.toLowerCase().includes(searchTerm)
-      );
-    }
-
-    // Apply sorting
+    
     if (sortBy) {
       switch (sortBy) {
         case 'price_asc':
@@ -179,11 +168,9 @@ export async function GET(request: NextRequest) {
         case 'newest':
           filteredProducts.sort((a, b) => parseInt(b.id) - parseInt(a.id));
           break;
-        default:
-          break;
       }
     }
-
+    
     return NextResponse.json({
       products: filteredProducts,
       total: filteredProducts.length,
@@ -208,21 +195,28 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Get single product by ID
+// IMPORTANT: Fix the POST method to properly handle single product requests
 export async function POST(request: Request) {
   try {
-    const { id } = await request.json();
+    const body = await request.json();
+    const { id } = body;
+    
+    console.log('Looking for product with ID:', id); // Debug log
+    
     const product = productsData.find(product => product.id === id);
     
     if (!product) {
+      console.log('Product not found for ID:', id); // Debug log
       return NextResponse.json(
         { error: 'Product not found' },
         { status: 404 }
       );
     }
     
+    console.log('Product found:', product.name); // Debug log
     return NextResponse.json(product, { status: 200 });
   } catch (error) {
+    console.error('Error in POST:', error);
     return NextResponse.json(
       { error: 'Failed to fetch product' },
       { status: 500 }

@@ -1,4 +1,4 @@
-// components/ProductsClient.tsx
+// app/components/ProductsClient.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -43,8 +43,7 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts, total,
     minPrice: searchParams.get('minPrice') || '',
     maxPrice: searchParams.get('maxPrice') || '',
     inStock: searchParams.get('inStock') || '',
-    sortBy: searchParams.get('sortBy') || 'newest',
-    search: searchParams.get('search') || ''
+    sortBy: searchParams.get('sortBy') || 'newest'
   });
 
   const categoryNames: Record<string, string> = {
@@ -61,24 +60,52 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts, total,
     { value: 'rating_desc', label: 'بالاترین امتیاز' }
   ];
 
+  // Fetch products when filters change
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      
+      const params = new URLSearchParams();
+      params.set('getAll', 'true');
+      
+      if (currentFilters.category && currentFilters.category !== 'all') {
+        params.set('category', currentFilters.category);
+      }
+      if (currentFilters.minPrice) params.set('minPrice', currentFilters.minPrice);
+      if (currentFilters.maxPrice) params.set('maxPrice', currentFilters.maxPrice);
+      if (currentFilters.inStock) params.set('inStock', currentFilters.inStock);
+      if (currentFilters.sortBy && currentFilters.sortBy !== 'newest') {
+        params.set('sortBy', currentFilters.sortBy);
+      }
+
+      try {
+        const response = await fetch(`/api/products?${params.toString()}`);
+        const data = await response.json();
+        setProducts(data.products || data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [currentFilters]);
+
   const updateFilters = (newFilters: Partial<typeof currentFilters>) => {
     const updatedFilters = { ...currentFilters, ...newFilters };
     setCurrentFilters(updatedFilters);
-    setLoading(true);
 
-    // Build URL with filters
+    // Update URL
     const params = new URLSearchParams();
     if (updatedFilters.category && updatedFilters.category !== 'all') params.set('category', updatedFilters.category);
     if (updatedFilters.minPrice) params.set('minPrice', updatedFilters.minPrice);
     if (updatedFilters.maxPrice) params.set('maxPrice', updatedFilters.maxPrice);
     if (updatedFilters.inStock) params.set('inStock', updatedFilters.inStock);
     if (updatedFilters.sortBy && updatedFilters.sortBy !== 'newest') params.set('sortBy', updatedFilters.sortBy);
-    if (updatedFilters.search) params.set('search', updatedFilters.search);
 
-    router.push(`/products?${params.toString()}`);
-    
-    // Simulate loading
-    setTimeout(() => setLoading(false), 300);
+    const newUrl = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ''}`;
+    router.push(newUrl, { scroll: false });
   };
 
   const clearFilters = () => {
@@ -87,10 +114,9 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts, total,
       minPrice: '',
       maxPrice: '',
       inStock: '',
-      sortBy: 'newest',
-      search: ''
+      sortBy: 'newest'
     });
-    router.push('/products');
+    router.push('/products', { scroll: false });
   };
 
   const hasActiveFilters = () => {
@@ -98,13 +124,15 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts, total,
            currentFilters.minPrice || 
            currentFilters.maxPrice || 
            currentFilters.inStock || 
-           currentFilters.sortBy !== 'newest' ||
-           currentFilters.search;
+           currentFilters.sortBy !== 'newest';
   };
 
   const formatPrice = (price: number) => {
     return price.toLocaleString('fa-IR') + ' تومان';
   };
+
+  const displayProducts = products;
+  const displayTotal = products.length;
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -119,18 +147,6 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts, total,
                   حذف همه
                 </button>
               )}
-            </div>
-
-            {/* Search */}
-            <div className="mb-6">
-              <label className="block text-white text-sm font-semibold mb-3">جستجو</label>
-              <input
-                type="text"
-                value={currentFilters.search}
-                onChange={(e) => updateFilters({ search: e.target.value })}
-                placeholder="جستجوی محصول..."
-                className="w-full bg-gray-900 text-white rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-orange-500 border border-gray-700 text-sm"
-              />
             </div>
 
             {/* Category */}
@@ -223,10 +239,10 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts, total,
 
         {/* Products Grid */}
         <div className="flex-1">
-          {/* Sort Bar - Mobile friendly */}
+          {/* Sort Bar */}
           <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-800">
             <p className="text-gray-400 text-sm">
-              {total} محصول
+              {displayTotal} محصول
             </p>
             <div className="lg:hidden">
               <select
@@ -259,9 +275,9 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts, total,
                 </div>
               ))}
             </div>
-          ) : products.length > 0 ? (
+          ) : displayProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map((product) => (
+              {displayProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
@@ -288,18 +304,6 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts, total,
               </button>
             </div>
             <div className="p-4">
-              {/* Search */}
-              <div className="mb-6">
-                <label className="block text-white text-sm font-semibold mb-3">جستجو</label>
-                <input
-                  type="text"
-                  value={currentFilters.search}
-                  onChange={(e) => updateFilters({ search: e.target.value })}
-                  placeholder="جستجوی محصول..."
-                  className="w-full bg-gray-900 text-white rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-orange-500 border border-gray-700 text-sm"
-                />
-              </div>
-
               {/* Category */}
               <div className="mb-6">
                 <label className="block text-white text-sm font-semibold mb-3">دسته‌بندی</label>
@@ -357,10 +361,29 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts, total,
                 </label>
               </div>
 
+              {/* Sort By on Mobile */}
+              <div className="mb-6">
+                <label className="block text-white text-sm font-semibold mb-3">مرتب‌سازی</label>
+                <select
+                  value={currentFilters.sortBy}
+                  onChange={(e) => updateFilters({ sortBy: e.target.value })}
+                  className="w-full bg-gray-900 text-white rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-orange-500 border border-gray-700 text-sm"
+                >
+                  {sortOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               {/* Buttons */}
               <div className="flex gap-3 mt-8">
                 <button
-                  onClick={clearFilters}
+                  onClick={() => {
+                    clearFilters();
+                    setIsMobileFilterOpen(false);
+                  }}
                   className="flex-1 bg-gray-800 text-white py-2 rounded-lg text-sm"
                 >
                   حذف همه
@@ -369,7 +392,7 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts, total,
                   onClick={() => setIsMobileFilterOpen(false)}
                   className="flex-1 bg-orange-500 text-white py-2 rounded-lg text-sm"
                 >
-                  اعمال
+                  بستن
                 </button>
               </div>
             </div>
