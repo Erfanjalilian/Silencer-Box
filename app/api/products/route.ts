@@ -1,5 +1,6 @@
 // app/api/products/route.ts
 import { NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 const productsData = [
   {
@@ -109,12 +110,91 @@ const productsData = [
   }
 ];
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    // Filter best selling products (isBestSeller = true)
-    const bestSellers = productsData.filter(product => product.isBestSeller === true);
-    
-    return NextResponse.json(bestSellers, {
+    const searchParams = request.nextUrl.searchParams;
+    const category = searchParams.get('category');
+    const minPrice = searchParams.get('minPrice');
+    const maxPrice = searchParams.get('maxPrice');
+    const inStock = searchParams.get('inStock');
+    const sortBy = searchParams.get('sortBy');
+    const search = searchParams.get('search');
+    const getAll = searchParams.get('getAll');
+
+    let filteredProducts = [...productsData];
+
+    // If getAll is not true, return best sellers (for homepage)
+    if (getAll !== 'true') {
+      const bestSellers = filteredProducts.filter(product => product.isBestSeller === true);
+      return NextResponse.json(bestSellers, {
+        status: 200,
+        headers: {
+          'Cache-Control': 's-maxage=60, stale-while-revalidate=30',
+        },
+      });
+    }
+
+    // Apply category filter
+    if (category && category !== 'all') {
+      filteredProducts = filteredProducts.filter(p => p.category === category);
+    }
+
+    // Apply price filter
+    if (minPrice) {
+      filteredProducts = filteredProducts.filter(p => p.price >= parseInt(minPrice));
+    }
+    if (maxPrice) {
+      filteredProducts = filteredProducts.filter(p => p.price <= parseInt(maxPrice));
+    }
+
+    // Apply stock filter
+    if (inStock === 'true') {
+      filteredProducts = filteredProducts.filter(p => p.inStock === true);
+    }
+
+    // Apply search filter
+    if (search) {
+      const searchTerm = search.toLowerCase();
+      filteredProducts = filteredProducts.filter(p => 
+        p.name.toLowerCase().includes(searchTerm) || 
+        p.description.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    // Apply sorting
+    if (sortBy) {
+      switch (sortBy) {
+        case 'price_asc':
+          filteredProducts.sort((a, b) => a.price - b.price);
+          break;
+        case 'price_desc':
+          filteredProducts.sort((a, b) => b.price - a.price);
+          break;
+        case 'discount_desc':
+          filteredProducts.sort((a, b) => b.discount - a.discount);
+          break;
+        case 'rating_desc':
+          filteredProducts.sort((a, b) => b.rating - a.rating);
+          break;
+        case 'newest':
+          filteredProducts.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+          break;
+        default:
+          break;
+      }
+    }
+
+    return NextResponse.json({
+      products: filteredProducts,
+      total: filteredProducts.length,
+      filters: {
+        categories: ['all', 'silentbox', 'accessory'],
+        priceRange: {
+          min: Math.min(...productsData.map(p => p.price)),
+          max: Math.max(...productsData.map(p => p.price))
+        }
+      }
+    }, {
       status: 200,
       headers: {
         'Cache-Control': 's-maxage=60, stale-while-revalidate=30',
@@ -128,7 +208,7 @@ export async function GET() {
   }
 }
 
-// Get all products (for other pages)
+// Get single product by ID
 export async function POST(request: Request) {
   try {
     const { id } = await request.json();
