@@ -165,10 +165,10 @@ export default function ContactPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
-          <p className="text-white mt-4">در حال بارگذاری...</p>
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-sky-500 border-t-transparent"></div>
+          <p className="text-gray-100 mt-4">در حال بارگذاری...</p>
         </div>
       </div>
     );
@@ -176,10 +176,10 @@ export default function ContactPage() {
 
   if (error || !contactData) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-500 text-lg">{error || 'خطا در بارگذاری صفحه تماس با ما'}</p>
-          <Link href="/" className="inline-block mt-4 text-orange-500 hover:text-orange-400">
+          <Link href="/" className="inline-block mt-4 text-sky-400 hover:text-sky-300">
             بازگشت به صفحه اصلی
           </Link>
         </div>
@@ -190,15 +190,15 @@ export default function ContactPage() {
   const hasHeroImage = contactData.hero.imageUrl && contactData.hero.imageUrl.trim() !== '';
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
       {/* Header Spacer */}
       <div className="h-16 md:h-20"></div>
 
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-r from-black to-gray-900">
+      <section className="relative py-20 bg-gradient-to-r from-gray-800 to-gray-900">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-100 mb-4">
               {contactData.hero.title}
             </h1>
             <p className="text-gray-300 text-lg">
@@ -213,11 +213,11 @@ export default function ContactPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Email Card */}
-            <div className="bg-black rounded-xl p-6 border border-gray-800 hover:border-orange-500/50 transition-all duration-300 text-center">
-              <div className="w-14 h-14 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <EnvelopeIcon className="h-7 w-7 text-orange-500" />
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-sky-500/50 transition-all duration-300 text-center">
+              <div className="w-14 h-14 bg-sky-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <EnvelopeIcon className="h-7 w-7 text-sky-400" />
               </div>
-              <h3 className="text-white font-semibold text-lg mb-3">ایمیل</h3>
+              <h3 className="text-gray-100 font-semibold text-lg mb-3">ایمیل</h3>
               <div className="space-y-2">
                 <p className="text-gray-400 text-sm">فروش: {contactData.contactInfo.email.sales}</p>
                 <p className="text-gray-400 text-sm">پشتیبانی: {contactData.contactInfo.email.support}</p>
@@ -226,11 +226,11 @@ export default function ContactPage() {
             </div>
 
             {/* Phone Card */}
-            <div className="bg-black rounded-xl p-6 border border-gray-800 hover:border-orange-500/50 transition-all duration-300 text-center">
-              <div className="w-14 h-14 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <PhoneIcon className="h-7 w-7 text-orange-500" />
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-sky-500/50 transition-all duration-300 text-center">
+              <div className="w-14 h-14 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <PhoneIcon className="h-7 w-7 text-green-500" />
               </div>
-              <h3 className="text-white font-semibold text-lg mb-3">تلفن</h3>
+              <h3 className="text-gray-100 font-semibold text-lg mb-3">تلفن</h3>
               <div className="space-y-2">
                 <p className="text-gray-400 text-sm">دفتر: {contactData.contactInfo.phone.primary}</p>
                 <p className="text-gray-400 text-sm">پشتیبانی: {contactData.contactInfo.phone.support}</p>
@@ -239,11 +239,11 @@ export default function ContactPage() {
             </div>
 
             {/* Address Card */}
-            <div className="bg-black rounded-xl p-6 border border-gray-800 hover:border-orange-500/50 transition-all duration-300 text-center">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-sky-500/50 transition-all duration-300 text-center">
               <div className="w-14 h-14 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <MapPinIcon className="h-7 w-7 text-orange-500" />
               </div>
-              <h3 className="text-white font-semibold text-lg mb-3">آدرس</h3>
+              <h3 className="text-gray-100 font-semibold text-lg mb-3">آدرس</h3>
               <div className="space-y-2">
                 <p className="text-gray-400 text-sm">{contactData.contactInfo.address.office}</p>
                 <p className="text-gray-400 text-sm text-xs mt-2">{contactData.contactInfo.address.factory}</p>
@@ -251,11 +251,11 @@ export default function ContactPage() {
             </div>
 
             {/* Hours Card */}
-            <div className="bg-black rounded-xl p-6 border border-gray-800 hover:border-orange-500/50 transition-all duration-300 text-center">
-              <div className="w-14 h-14 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <ClockIcon className="h-7 w-7 text-orange-500" />
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-sky-500/50 transition-all duration-300 text-center">
+              <div className="w-14 h-14 bg-sky-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <ClockIcon className="h-7 w-7 text-sky-400" />
               </div>
-              <h3 className="text-white font-semibold text-lg mb-3">ساعات کاری</h3>
+              <h3 className="text-gray-100 font-semibold text-lg mb-3">ساعات کاری</h3>
               <div className="space-y-2">
                 <p className="text-gray-400 text-sm">{contactData.contactInfo.workingHours.weekdays}</p>
                 <p className="text-gray-400 text-sm">{contactData.contactInfo.workingHours.thursday}</p>
@@ -267,12 +267,12 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Form and Map Section */}
-      <section className="py-16 bg-black">
+      <section className="py-16 bg-gray-800">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Form */}
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-100 mb-3">
                 {contactData.form.title}
               </h2>
               <p className="text-gray-400 mb-6">
@@ -289,8 +289,8 @@ export default function ContactPage() {
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label className="block text-white mb-2 text-sm">
-                    {contactData.form.fields.name.label} {contactData.form.fields.name.required && <span className="text-orange-500">*</span>}
+                  <label className="block text-gray-100 mb-2 text-sm">
+                    {contactData.form.fields.name.label} {contactData.form.fields.name.required && <span className="text-sky-400">*</span>}
                   </label>
                   <input
                     type="text"
@@ -299,13 +299,13 @@ export default function ContactPage() {
                     onChange={handleInputChange}
                     placeholder={contactData.form.fields.name.placeholder}
                     required={contactData.form.fields.name.required}
-                    className="w-full bg-gray-900 text-white rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-orange-500 border border-gray-700"
+                    className="w-full bg-gray-900 text-gray-100 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-sky-500 border border-gray-700"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-white mb-2 text-sm">
-                    {contactData.form.fields.email.label} {contactData.form.fields.email.required && <span className="text-orange-500">*</span>}
+                  <label className="block text-gray-100 mb-2 text-sm">
+                    {contactData.form.fields.email.label} {contactData.form.fields.email.required && <span className="text-sky-400">*</span>}
                   </label>
                   <input
                     type="email"
@@ -314,12 +314,12 @@ export default function ContactPage() {
                     onChange={handleInputChange}
                     placeholder={contactData.form.fields.email.placeholder}
                     required={contactData.form.fields.email.required}
-                    className="w-full bg-gray-900 text-white rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-orange-500 border border-gray-700"
+                    className="w-full bg-gray-900 text-gray-100 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-sky-500 border border-gray-700"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-white mb-2 text-sm">
+                  <label className="block text-gray-100 mb-2 text-sm">
                     {contactData.form.fields.phone.label}
                   </label>
                   <input
@@ -328,20 +328,20 @@ export default function ContactPage() {
                     value={formData.phone}
                     onChange={handleInputChange}
                     placeholder={contactData.form.fields.phone.placeholder}
-                    className="w-full bg-gray-900 text-white rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-orange-500 border border-gray-700"
+                    className="w-full bg-gray-900 text-gray-100 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-sky-500 border border-gray-700"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-white mb-2 text-sm">
-                    {contactData.form.fields.subject.label} {contactData.form.fields.subject.required && <span className="text-orange-500">*</span>}
+                  <label className="block text-gray-100 mb-2 text-sm">
+                    {contactData.form.fields.subject.label} {contactData.form.fields.subject.required && <span className="text-sky-400">*</span>}
                   </label>
                   <select
                     name="subject"
                     value={formData.subject}
                     onChange={handleInputChange}
                     required={contactData.form.fields.subject.required}
-                    className="w-full bg-gray-900 text-white rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-orange-500 border border-gray-700"
+                    className="w-full bg-gray-900 text-gray-100 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-sky-500 border border-gray-700"
                   >
                     <option value="">{contactData.form.fields.subject.placeholder}</option>
                     {contactData.form.fields.subject.options.map((option) => (
@@ -351,8 +351,8 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label className="block text-white mb-2 text-sm">
-                    {contactData.form.fields.message.label} {contactData.form.fields.message.required && <span className="text-orange-500">*</span>}
+                  <label className="block text-gray-100 mb-2 text-sm">
+                    {contactData.form.fields.message.label} {contactData.form.fields.message.required && <span className="text-sky-400">*</span>}
                   </label>
                   <textarea
                     name="message"
@@ -361,14 +361,14 @@ export default function ContactPage() {
                     placeholder={contactData.form.fields.message.placeholder}
                     required={contactData.form.fields.message.required}
                     rows={5}
-                    className="w-full bg-gray-900 text-white rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-orange-500 border border-gray-700 resize-none"
+                    className="w-full bg-gray-900 text-gray-100 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-sky-500 border border-gray-700 resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? 'در حال ارسال...' : contactData.form.submitButton}
                 </button>
@@ -378,7 +378,7 @@ export default function ContactPage() {
             {/* Map and Social */}
             <div>
               {/* Map Placeholder */}
-              <div className="bg-gray-800 rounded-xl overflow-hidden mb-6 h-64">
+              <div className="bg-gray-900 rounded-xl overflow-hidden mb-6 h-64 border border-gray-700">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12959.247458126543!2d51.3890!3d35.6892!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f8e00491b1c5e1d%3A0x2f1c8e4f1e5c8e1f!2sTehran!5e0!3m2!1sen!2s!4v1699999999999!5m2!1sen!2s"
                   width="100%"
@@ -392,25 +392,25 @@ export default function ContactPage() {
               </div>
 
               {/* Social Media */}
-              <div className="bg-black rounded-xl p-6 border border-gray-800">
-                <h3 className="text-white font-semibold text-lg mb-4 text-center">
+              <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                <h3 className="text-gray-100 font-semibold text-lg mb-4 text-center">
                   {contactData.socialMedia.title}
                 </h3>
                 <div className="flex justify-center gap-4">
-                  <a href={contactData.socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-orange-500 transition-colors">
-                    <span className="text-white">📷</span>
+                  <a href={contactData.socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center hover:bg-sky-500 transition-colors">
+                    <span className="text-gray-400 hover:text-white">📷</span>
                   </a>
-                  <a href={contactData.socialMedia.twitter} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-orange-500 transition-colors">
-                    <span className="text-white">🐦</span>
+                  <a href={contactData.socialMedia.twitter} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center hover:bg-sky-500 transition-colors">
+                    <span className="text-gray-400 hover:text-white">🐦</span>
                   </a>
-                  <a href={contactData.socialMedia.linkedin} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-orange-500 transition-colors">
-                    <span className="text-white">🔗</span>
+                  <a href={contactData.socialMedia.linkedin} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center hover:bg-sky-500 transition-colors">
+                    <span className="text-gray-400 hover:text-white">🔗</span>
                   </a>
-                  <a href={contactData.socialMedia.telegram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-orange-500 transition-colors">
-                    <span className="text-white">✈️</span>
+                  <a href={contactData.socialMedia.telegram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center hover:bg-sky-500 transition-colors">
+                    <span className="text-gray-400 hover:text-white">✈️</span>
                   </a>
-                  <a href={contactData.socialMedia.whatsapp} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-orange-500 transition-colors">
-                    <span className="text-white">💬</span>
+                  <a href={contactData.socialMedia.whatsapp} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center hover:bg-green-500 transition-colors">
+                    <span className="text-gray-400 hover:text-white">💬</span>
                   </a>
                 </div>
               </div>
@@ -423,23 +423,23 @@ export default function ContactPage() {
       <section className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-100 text-center mb-4">
               {contactData.faq.title}
             </h2>
-            <div className="w-20 h-1 bg-orange-500 mx-auto mb-10"></div>
+            <div className="w-20 h-1 bg-sky-500 mx-auto mb-10"></div>
 
             <div className="space-y-4">
               {contactData.faq.items.map((faq, index) => (
-                <div key={index} className="bg-black rounded-xl border border-gray-800 overflow-hidden">
+                <div key={index} className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
                   <button
                     onClick={() => toggleFaq(index)}
                     className="w-full flex items-center justify-between p-5 text-right hover:bg-gray-900 transition-colors"
                   >
-                    <span className="text-white font-medium">{faq.question}</span>
+                    <span className="text-gray-100 font-medium">{faq.question}</span>
                     {openFaqIndex === index ? (
-                      <ChevronUpIcon className="h-5 w-5 text-orange-500" />
+                      <ChevronUpIcon className="h-5 w-5 text-sky-400" />
                     ) : (
-                      <ChevronDownIcon className="h-5 w-5 text-orange-500" />
+                      <ChevronDownIcon className="h-5 w-5 text-sky-400" />
                     )}
                   </button>
                   {openFaqIndex === index && (
@@ -455,9 +455,9 @@ export default function ContactPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-black">
+      <section className="py-16 bg-gray-800">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-100 mb-4">
             نیاز به کمک فوری دارید؟
           </h2>
           <p className="text-gray-400 mb-6">

@@ -56,7 +56,7 @@ async function getProducts(searchParams: { [key: string]: string | string[] | un
 // Loading skeleton component
 function ProductsLoading() {
   return (
-    <div className="min-h-screen bg-gray-900 py-8">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <div className="h-10 bg-gray-800 rounded-lg w-48 mb-4 animate-pulse"></div>
@@ -64,14 +64,14 @@ function ProductsLoading() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="bg-black rounded-xl overflow-hidden border border-gray-800 animate-pulse">
-              <div className="h-48 bg-gray-800"></div>
+            <div key={i} className="bg-gray-800 rounded-xl overflow-hidden border border-gray-700 animate-pulse">
+              <div className="h-48 bg-gray-700"></div>
               <div className="p-4">
-                <div className="h-4 bg-gray-800 rounded w-20 mb-2"></div>
-                <div className="h-5 bg-gray-800 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-800 rounded w-full mb-2"></div>
-                <div className="h-6 bg-gray-800 rounded w-1/2 mb-3"></div>
-                <div className="h-10 bg-gray-800 rounded"></div>
+                <div className="h-4 bg-gray-700 rounded w-20 mb-2"></div>
+                <div className="h-5 bg-gray-700 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-gray-700 rounded w-full mb-2"></div>
+                <div className="h-6 bg-gray-700 rounded w-1/2 mb-3"></div>
+                <div className="h-10 bg-gray-700 rounded"></div>
               </div>
             </div>
           ))}
@@ -84,10 +84,10 @@ function ProductsLoading() {
 // Error component
 function ProductsError({ message }: { message: string }) {
   return (
-    <div className="min-h-screen bg-gray-900 py-8 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-8 flex items-center justify-center">
       <div className="text-center">
         <p className="text-red-500 text-lg mb-4">{message}</p>
-        <Link href="/" className="inline-block bg-orange-500 text-white px-6 py-2 rounded-lg">
+        <Link href="/" className="inline-block bg-sky-500 hover:bg-sky-600 text-white px-6 py-2 rounded-lg transition-all duration-300">
           بازگشت به خانه
         </Link>
       </div>
@@ -104,14 +104,14 @@ export default async function ProductsPage({
     const { products, total, filters } = await getProducts(searchParams);
 
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
         {/* Header Spacer */}
         <div className="h-16 md:h-20"></div>
 
         {/* Page Header */}
-        <div className="bg-gradient-to-r from-black to-gray-900 py-8 border-b border-gray-800">
+        <div className="bg-gradient-to-r from-gray-800 to-gray-900 py-8 border-b border-sky-500/30">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-100 mb-2">
               همه محصولات
             </h1>
             <p className="text-gray-400">

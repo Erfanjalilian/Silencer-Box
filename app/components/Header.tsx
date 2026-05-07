@@ -4,9 +4,13 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { ShoppingCartIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { useCart } from '@/contexts/CartContext';
 
 const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { getCartCount } = useCart();
+  
+  const cartCount = getCartCount();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -14,53 +18,58 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-black border-b border-orange-500/30 shadow-lg">
+      <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-gray-900 to-gray-800 border-b border-sky-500/30 shadow-lg">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             
             {/* Logo / Brand */}
             <div className="flex-shrink-0">
               <Link href="/" className="text-2xl md:text-3xl font-bold tracking-tight">
-                <span className="text-white">Silent</span>
+                <span className="text-sky-400">Silent</span>
                 <span className="text-orange-500">Box</span>
               </Link>
             </div>
 
             {/* Desktop Navigation Links - hidden on mobile */}
             <nav className="hidden md:flex items-center gap-12 mr-10">
-              <Link href="/" className="text-white hover:text-orange-400 transition-colors duration-200 font-medium">
+              <Link href="/" className="text-gray-300 hover:text-sky-400 transition-colors duration-200 font-medium">
                 صفحه اصلی
               </Link>
-              <Link href="/products" className="text-white hover:text-orange-400 transition-colors duration-200 font-medium">
+              <Link href="/products" className="text-gray-300 hover:text-sky-400 transition-colors duration-200 font-medium">
                 محصولات
               </Link>
-              <Link href="/contact" className="text-white hover:text-orange-400 transition-colors duration-200 font-medium">
+              <Link href="/contact" className="text-gray-300 hover:text-sky-400 transition-colors duration-200 font-medium">
                 تماس با ما
               </Link>
-              <Link href="/about" className="text-white hover:text-orange-400 transition-colors duration-200 font-medium">
+              <Link href="/about" className="text-gray-300 hover:text-sky-400 transition-colors duration-200 font-medium">
                 درباره ما
               </Link>
             </nav>
 
             {/* Right side icons: Cart, User, Menu (mobile) */}
             <div className="flex items-center gap-3 sm:gap-5">
-              {/* Cart Button with badge */}
-              <button className="relative text-white hover:text-orange-400 transition-colors">
+              {/* Cart Button with badge - Now a Link to cart page */}
+              <Link 
+                href="/cart" 
+                className="relative text-gray-300 hover:text-sky-400 transition-colors"
+              >
                 <ShoppingCartIcon className="h-5 w-5 sm:h-6 sm:w-6" />
-                <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
-                  ۳
-                </span>
-              </button>
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                    {cartCount > 99 ? '99+' : cartCount}
+                  </span>
+                )}
+              </Link>
 
               {/* User Button */}
-              <button className="hidden sm:block text-white hover:text-orange-400 transition-colors">
+              <button className="hidden sm:block text-gray-300 hover:text-sky-400 transition-colors">
                 <UserIcon className="h-5 w-5 sm:h-6 sm:w-6" />
               </button>
 
               {/* Mobile Menu Button */}
               <button 
                 onClick={toggleMobileMenu}
-                className="md:hidden text-white hover:text-orange-400 transition-colors"
+                className="md:hidden text-gray-300 hover:text-sky-400 transition-colors"
               >
                 {isMobileMenuOpen ? (
                   <XMarkIcon className="h-6 w-6" />
@@ -78,44 +87,58 @@ const Header: React.FC = () => {
         <div className="fixed inset-0 z-40 md:hidden">
           {/* Backdrop */}
           <div 
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            className="absolute inset-0 bg-gray-900/95 backdrop-blur-sm"
             onClick={toggleMobileMenu}
           />
           
           {/* Mobile Menu Panel */}
-          <div className="absolute top-16 right-0 bottom-0 w-64 bg-black border-l border-orange-500/30 shadow-xl animate-slide-in">
+          <div className="absolute top-16 right-0 bottom-0 w-64 bg-gradient-to-b from-gray-800 to-gray-900 border-l border-sky-500/30 shadow-xl animate-slide-in">
             <nav className="flex flex-col py-8 px-6 space-y-6">
               <Link 
                 href="/" 
                 onClick={toggleMobileMenu}
-                className="text-white hover:text-orange-400 transition-colors duration-200 font-medium text-lg"
+                className="text-gray-300 hover:text-sky-400 transition-colors duration-200 font-medium text-lg"
               >
                 صفحه اصلی
               </Link>
               <Link 
                 href="/products" 
                 onClick={toggleMobileMenu}
-                className="text-white hover:text-orange-400 transition-colors duration-200 font-medium text-lg"
+                className="text-gray-300 hover:text-sky-400 transition-colors duration-200 font-medium text-lg"
               >
                 محصولات
               </Link>
               <Link 
                 href="/contact" 
                 onClick={toggleMobileMenu}
-                className="text-white hover:text-orange-400 transition-colors duration-200 font-medium text-lg"
+                className="text-gray-300 hover:text-sky-400 transition-colors duration-200 font-medium text-lg"
               >
                 تماس با ما
               </Link>
               <Link 
                 href="/about" 
                 onClick={toggleMobileMenu}
-                className="text-white hover:text-orange-400 transition-colors duration-200 font-medium text-lg"
+                className="text-gray-300 hover:text-sky-400 transition-colors duration-200 font-medium text-lg"
               >
                 درباره ما
               </Link>
               
-              <div className="pt-6 border-t border-orange-500/30">
-                <button className="w-full flex items-center justify-between text-white hover:text-orange-400 transition-colors">
+              {/* Cart link in mobile menu */}
+              <Link 
+                href="/cart" 
+                onClick={toggleMobileMenu}
+                className="flex items-center justify-between text-gray-300 hover:text-sky-400 transition-colors duration-200 font-medium text-lg"
+              >
+                <span>سبد خرید</span>
+                {cartCount > 0 && (
+                  <span className="bg-green-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+              
+              <div className="pt-6 border-t border-sky-500/30">
+                <button className="w-full flex items-center justify-between text-gray-300 hover:text-sky-400 transition-colors">
                   <span>حساب کاربری</span>
                   <UserIcon className="h-5 w-5" />
                 </button>

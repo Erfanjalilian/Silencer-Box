@@ -65,7 +65,7 @@ async function getAboutData(): Promise<AboutData | null> {
     const response = await fetch(`${baseUrl}/api/about`, {
       cache: 'force-cache',
       next: {
-        revalidate: 3600 // Revalidate every hour
+        revalidate: 3600
       }
     });
     
@@ -85,7 +85,7 @@ function HeroImage({ imageUrl, title }: { imageUrl: string; title: string }) {
   const hasImage = imageUrl && imageUrl.trim() !== '';
   
   return (
-    <div className="relative h-[400px] md:h-[500px] w-full rounded-2xl overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
+    <div className="relative h-[400px] md:h-[500px] w-full rounded-2xl overflow-hidden bg-gradient-to-br from-gray-700 to-gray-800">
       {hasImage ? (
         <Image
           src={imageUrl}
@@ -96,7 +96,7 @@ function HeroImage({ imageUrl, title }: { imageUrl: string; title: string }) {
         />
       ) : (
         <div className="flex flex-col items-center justify-center h-full">
-          <PhotoIcon className="h-32 w-32 text-orange-500/30 mb-4" />
+          <PhotoIcon className="h-32 w-32 text-sky-500/30 mb-4" />
           <p className="text-gray-500">تصویر سیلنت‌باکس</p>
         </div>
       )}
@@ -109,10 +109,10 @@ export default async function AboutPage() {
   
   if (!aboutData) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-500 text-lg">مشکلی در بارگذاری اطلاعات پیش آم است</p>
-          <Link href="/" className="inline-block mt-4 text-orange-500 hover:text-orange-400">
+          <Link href="/" className="inline-block mt-4 text-sky-400 hover:text-sky-300">
             بازگشت به صفحه اصلی
           </Link>
         </div>
@@ -124,7 +124,7 @@ export default async function AboutPage() {
   const subtitleSection = aboutData.sections.find(s => s.type === 'subtitle');
   
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
       {/* Header Spacer */}
       <div className="h-16 md:h-20"></div>
       
@@ -133,13 +133,13 @@ export default async function AboutPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-100 mb-6">
                 {aboutData.title}
               </h1>
               <p className="text-gray-300 text-lg leading-relaxed mb-4">
                 {heroSection?.content}
               </p>
-              <p className="text-orange-400 text-lg leading-relaxed">
+              <p className="text-sky-400 text-lg leading-relaxed">
                 {subtitleSection?.content}
               </p>
             </div>
@@ -149,13 +149,13 @@ export default async function AboutPage() {
       </section>
       
       {/* Features Section */}
-      <section className="py-16 bg-black">
+      <section className="py-16 bg-gray-800">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-100 mb-4">
               ویژگی‌های سیلنت‌باکس
             </h2>
-            <div className="w-20 h-1 bg-orange-500 mx-auto"></div>
+            <div className="w-20 h-1 bg-sky-500 mx-auto"></div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -164,16 +164,16 @@ export default async function AboutPage() {
               return (
                 <div
                   key={index}
-                  className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-orange-500/50 transition-all duration-300 hover:transform hover:scale-105"
+                  className="bg-gray-900 rounded-xl p-6 border border-gray-700 hover:border-sky-500/50 transition-all duration-300 hover:transform hover:scale-105"
                 >
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0">
-                      <div className="w-12 h-12 bg-orange-500/10 rounded-lg flex items-center justify-center">
-                        <IconComponent className="h-6 w-6 text-orange-500" />
+                      <div className="w-12 h-12 bg-sky-500/10 rounded-lg flex items-center justify-center">
+                        <IconComponent className="h-6 w-6 text-sky-400" />
                       </div>
                     </div>
                     <div>
-                      <h3 className="text-white font-semibold text-lg mb-2">
+                      <h3 className="text-gray-100 font-semibold text-lg mb-2">
                         {feature.title}
                       </h3>
                       <p className="text-gray-400 text-sm leading-relaxed">
@@ -188,7 +188,7 @@ export default async function AboutPage() {
           
           {/* Additional Features Note */}
           <div className="text-center mt-8">
-            <p className="text-orange-400 text-sm">
+            <p className="text-sky-400 text-sm">
               {aboutData.additionalFeatures}
             </p>
           </div>
@@ -199,12 +199,12 @@ export default async function AboutPage() {
       <section className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="bg-gradient-to-r from-orange-500/10 to-transparent rounded-2xl p-8 md:p-12 border border-orange-500/20">
-              <CheckBadgeIcon className="h-16 w-16 text-orange-500 mx-auto mb-6" />
-              <p className="text-white text-xl md:text-2xl leading-relaxed mb-6">
+            <div className="bg-gradient-to-r from-sky-500/10 to-transparent rounded-2xl p-8 md:p-12 border border-sky-500/20">
+              <CheckBadgeIcon className="h-16 w-16 text-sky-400 mx-auto mb-6" />
+              <p className="text-gray-100 text-xl md:text-2xl leading-relaxed mb-6">
                 {aboutData.closingMessage}
               </p>
-              <p className="text-orange-400 text-lg font-semibold">
+              <p className="text-sky-400 text-lg font-semibold">
                 {aboutData.offerMessage}
               </p>
             </div>
@@ -213,15 +213,15 @@ export default async function AboutPage() {
       </section>
       
       {/* Delivery and Benefits Section */}
-      <section className="py-16 bg-black">
+      <section className="py-16 bg-gray-800">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Direct from Factory */}
             <div className="text-center">
-              <div className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <HomeModernIcon className="h-10 w-10 text-orange-500" />
+              <div className="w-20 h-20 bg-sky-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <HomeModernIcon className="h-10 w-10 text-sky-400" />
               </div>
-              <h3 className="text-white font-semibold text-lg mb-2">
+              <h3 className="text-gray-100 font-semibold text-lg mb-2">
                 خرید مستقیم از کارخانه
               </h3>
               <p className="text-gray-400 text-sm">
@@ -231,10 +231,10 @@ export default async function AboutPage() {
             
             {/* Fast Delivery */}
             <div className="text-center">
-              <div className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TruckIcon className="h-10 w-10 text-orange-500" />
+              <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <TruckIcon className="h-10 w-10 text-green-500" />
               </div>
-              <h3 className="text-white font-semibold text-lg mb-2">
+              <h3 className="text-gray-100 font-semibold text-lg mb-2">
                 ارسال سریع
               </h3>
               <p className="text-gray-400 text-sm">
@@ -247,7 +247,7 @@ export default async function AboutPage() {
               <div className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CurrencyDollarIcon className="h-10 w-10 text-orange-500" />
               </div>
-              <h3 className="text-white font-semibold text-lg mb-2">
+              <h3 className="text-gray-100 font-semibold text-lg mb-2">
                 بهترین قیمت
               </h3>
               <p className="text-gray-400 text-sm">
@@ -262,19 +262,19 @@ export default async function AboutPage() {
       <section className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-100 mb-6">
               آماده خرید از سیلنت‌باکس هستید؟
             </h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/products"
-                className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300"
+                className="inline-block bg-green-500 hover:bg-green-600 text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300"
               >
                 مشاهده محصولات
               </Link>
               <Link
                 href="/contact"
-                className="inline-block bg-transparent border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300"
+                className="inline-block bg-transparent border-2 border-sky-500 text-sky-400 hover:bg-sky-500 hover:text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300"
               >
                 تماس با ما
               </Link>

@@ -33,7 +33,7 @@ async function getAllProducts(): Promise<Product[]> {
     const response = await fetch(`${baseUrl}/api/products`, {
       cache: 'force-cache',
       next: {
-        revalidate: 3600 // Revalidate every hour
+        revalidate: 3600
       }
     });
     
@@ -53,7 +53,6 @@ function ProductCard({ product }: { product: Product }) {
   const hasImage = product.imageUrl && product.imageUrl.trim() !== '';
   const discountPercentage = product.discount;
   
-  // Render stars based on rating
   const renderStars = () => {
     const fullStars = Math.floor(product.rating);
     const hasHalfStar = product.rating % 1 >= 0.5;
@@ -80,11 +79,11 @@ function ProductCard({ product }: { product: Product }) {
   };
 
   return (
-    <div className="bg-black rounded-xl overflow-hidden border border-gray-800 hover:border-orange-500/50 transition-all duration-300 hover:transform hover:scale-105 group h-full flex flex-col relative">
+    <div className="bg-gray-800 rounded-xl overflow-hidden border border-gray-700 hover:border-sky-500/50 transition-all duration-300 hover:transform hover:scale-105 group h-full flex flex-col relative">
       {/* Discount Badge - Prominent for highest discounts */}
       {discountPercentage > 0 && (
         <div className="absolute top-4 left-4 z-10">
-          <span className="bg-red-500 text-white text-sm font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-lg">
+          <span className="bg-green-500 text-white text-sm font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-lg">
             <TagIcon className="h-4 w-4" />
             {discountPercentage}٪ تخفیف
           </span>
@@ -93,7 +92,7 @@ function ProductCard({ product }: { product: Product }) {
       
       {/* Product Image or Icon Placeholder */}
       <Link href={`/products/${product.id}`} className="block">
-        <div className="relative h-56 w-full overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
+        <div className="relative h-56 w-full overflow-hidden bg-gradient-to-br from-gray-700 to-gray-800">
           {hasImage ? (
             <Image
               src={product.imageUrl}
@@ -104,8 +103,8 @@ function ProductCard({ product }: { product: Product }) {
             />
           ) : (
             <div className="flex flex-col items-center justify-center h-full">
-              <PhotoIcon className="h-20 w-20 text-orange-500/30 mb-2" />
-              <p className="text-gray-600 text-sm">تصویر محصول</p>
+              <PhotoIcon className="h-20 w-20 text-sky-500/30 mb-2" />
+              <p className="text-gray-500 text-sm">تصویر محصول</p>
             </div>
           )}
         </div>
@@ -114,13 +113,13 @@ function ProductCard({ product }: { product: Product }) {
       {/* Product Content */}
       <div className="p-5 flex-grow flex flex-col">
         {/* Category */}
-        <p className="text-orange-500 text-xs mb-2">
+        <p className="text-sky-400 text-xs mb-2">
           {product.category === 'silentbox' ? 'سیلنت‌باکس' : 'لوازم جانبی'}
         </p>
         
         {/* Product Name */}
         <Link href={`/products/${product.id}`}>
-          <h3 className="text-lg font-bold text-white mb-2 hover:text-orange-400 transition-colors line-clamp-2">
+          <h3 className="text-lg font-bold text-gray-100 mb-2 hover:text-sky-400 transition-colors line-clamp-2">
             {product.name}
           </h3>
         </Link>
@@ -133,7 +132,7 @@ function ProductCard({ product }: { product: Product }) {
         {/* Price with prominent discount display */}
         <div className="mb-4">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-orange-500 text-xl font-bold">
+            <span className="text-sky-400 text-xl font-bold">
               {formatPrice(product.price)}
             </span>
             <span className="text-gray-500 text-sm line-through">
@@ -141,7 +140,7 @@ function ProductCard({ product }: { product: Product }) {
             </span>
           </div>
           <div className="flex items-center gap-2 mt-1">
-            <span className="bg-red-500/20 text-red-400 text-xs px-2 py-0.5 rounded-full">
+            <span className="bg-green-500/20 text-green-400 text-xs px-2 py-0.5 rounded-full">
               {discountPercentage}٪ تخفیف ویژه
             </span>
             <span className="text-green-500 text-xs">
@@ -170,8 +169,8 @@ function ProductCard({ product }: { product: Product }) {
           disabled={!product.inStock}
           className={`w-full py-2.5 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
             product.inStock
-              ? 'bg-orange-500 hover:bg-orange-600 text-white cursor-pointer'
-              : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+              ? 'bg-green-500 hover:bg-green-600 text-white cursor-pointer'
+              : 'bg-gray-700 text-gray-500 cursor-not-allowed'
           }`}
         >
           <ShoppingCartIcon className="h-5 w-5" />
@@ -186,15 +185,14 @@ function ProductCard({ product }: { product: Product }) {
 const HighestDiscounts: React.FC = async () => {
   const allProducts = await getAllProducts();
   
-  // Sort products by discount percentage (highest first) and get top 4
   const highestDiscounts = [...allProducts]
-    .filter(product => product.discount > 0 && product.inStock) // Only show discounted and in-stock products
+    .filter(product => product.discount > 0 && product.inStock)
     .sort((a, b) => b.discount - a.discount)
     .slice(0, 4);
 
   if (!highestDiscounts || highestDiscounts.length === 0) {
     return (
-      <section className="py-16 bg-gray-900">
+      <section className="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <p className="text-gray-400 text-lg">محصول با تخفیفی یافت نشد</p>
@@ -205,20 +203,20 @@ const HighestDiscounts: React.FC = async () => {
   }
 
   return (
-    <section className="py-16 bg-gradient-to-b from-gray-900 to-black">
+    <section className="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <TagIcon className="h-8 w-8 text-orange-500" />
-            <h2 className="text-3xl md:text-4xl font-bold text-white">
+            <TagIcon className="h-8 w-8 text-green-500" />
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-100">
               ویژه‌ترین تخفیف‌ها
             </h2>
           </div>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             بهترین محصولات با بالاترین درصد تخفیف را از دست ندهید
           </p>
-          <div className="w-20 h-1 bg-orange-500 mx-auto mt-4"></div>
+          <div className="w-20 h-1 bg-sky-500 mx-auto mt-4"></div>
         </div>
 
         {/* Products Grid */}
@@ -232,7 +230,7 @@ const HighestDiscounts: React.FC = async () => {
         <div className="text-center mt-12">
           <Link
             href="/products?discount=true"
-            className="inline-block bg-transparent border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300"
+            className="inline-block bg-transparent border-2 border-sky-500 text-sky-400 hover:bg-sky-500 hover:text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300"
           >
             مشاهده همه تخفیف‌ها
           </Link>

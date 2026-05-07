@@ -1,9 +1,13 @@
-// app/products/[id]/page.tsx
-import { notFound } from 'next/navigation';
+// app/products/[id]/page.tsx (Updated with Cart functionality)
+'use client';
+
+import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { PhotoIcon, StarIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
+import { useState, useEffect } from 'react';
+import { PhotoIcon, StarIcon, ShoppingCartIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
+import { useCart } from '@/contexts/CartContext';
 
 interface Product {
   id: string;
@@ -26,7 +30,6 @@ async function getProduct(id: string): Promise<Product | null> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     
-    // اضافه کردن timeout و revalidate
     const response = await fetch(`${baseUrl}/api/products`, {
       method: 'POST',
       headers: {
@@ -34,7 +37,7 @@ async function getProduct(id: string): Promise<Product | null> {
       },
       body: JSON.stringify({ id }),
       next: {
-        revalidate: 60 // بازvalidation هر 60 ثانیه
+        revalidate: 60
       }
     });
     
@@ -52,25 +55,65 @@ async function getProduct(id: string): Promise<Product | null> {
   }
 }
 
-// ✅ تعریف صحیح interface با Promise
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
+export default function ProductPage() {
+  const params = useParams();
+  const { addToCart, getItemQuantity } = useCart();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [quantity, setQuantity] = useState(1);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-export default async function ProductPage({ params }: PageProps) {
-  // ✅ حتما await کنید
-  const { id: productId } = await params;
-  
-  if (!productId) {
+  const productId = params?.id as string;
+
+  useEffect(() => {
+    if (productId) {
+      getProduct(productId).then(data => {
+        setProduct(data);
+        setLoading(false);
+        if (!data) {
+          setError('Product not found');
+        }
+      });
+    }
+  }, [productId]);
+
+  const handleAddToCart = () => {
+    if (product && product.inStock) {
+      addToCart({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        originalPrice: product.originalPrice,
+        discount: product.discount,
+        quantity: quantity,
+        imageUrl: product.imageUrl,
+        category: product.category,
+        inStock: product.inStock,
+      });
+      
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    }
+  };
+
+  const currentQuantityInCart = product ? getItemQuantity(product.id) : 0;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-sky-500 border-t-transparent"></div>
+          <p className="text-gray-100 mt-4">در حال بارگذاری...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !product) {
     notFound();
   }
-  
-  const product = await getProduct(productId);
-  
-  if (!product) {
-    notFound();
-  }
-  
+
   const hasImage = product.imageUrl && product.imageUrl.trim() !== '';
   
   const renderStars = () => {
@@ -97,18 +140,25 @@ export default async function ProductPage({ params }: PageProps) {
   const formatPrice = (price: number) => {
     return price.toLocaleString('fa-IR') + ' تومان';
   };
-  
+
   return (
-    <div className="min-h-screen bg-gray-900">
-      {/* Header Spacer */}
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
       <div className="h-16 md:h-20"></div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
         <div className="max-w-6xl mx-auto">
+          {/* Success Notification */}
+          {showSuccess && (
+            <div className="fixed top-20 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-slide-in">
+              <CheckCircleIcon className="h-5 w-5" />
+              <span>محصول به سبد خرید اضافه شد!</span>
+            </div>
+          )}
+
           {/* Back Button */}
           <Link 
             href="/products" 
-            className="inline-flex items-center gap-2 text-orange-500 hover:text-orange-400 mb-6 transition-colors"
+            className="inline-flex items-center gap-2 text-sky-400 hover:text-sky-300 mb-6 transition-colors"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -118,7 +168,7 @@ export default async function ProductPage({ params }: PageProps) {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             {/* Product Image */}
-            <div className="relative h-80 md:h-96 rounded-xl overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
+            <div className="relative h-80 md:h-96 rounded-xl overflow-hidden bg-gradient-to-br from-gray-700 to-gray-800">
               {hasImage ? (
                 <Image
                   src={product.imageUrl}
@@ -129,7 +179,7 @@ export default async function ProductPage({ params }: PageProps) {
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center h-full">
-                  <PhotoIcon className="h-24 w-24 text-orange-500/30 mb-4" />
+                  <PhotoIcon className="h-24 w-24 text-sky-500/30 mb-4" />
                   <p className="text-gray-500">تصویر محصول</p>
                 </div>
               )}
@@ -137,14 +187,13 @@ export default async function ProductPage({ params }: PageProps) {
             
             {/* Product Info */}
             <div>
-              {/* Category Badge */}
               <div className="mb-3">
-                <span className="inline-block bg-orange-500/10 text-orange-500 text-sm px-3 py-1 rounded-full">
+                <span className="inline-block bg-sky-500/10 text-sky-400 text-sm px-3 py-1 rounded-full">
                   {product.category === 'silentbox' ? 'سیلنت‌باکس' : 'لوازم جانبی'}
                 </span>
               </div>
               
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-100 mb-4">
                 {product.name}
               </h1>
               
@@ -153,18 +202,18 @@ export default async function ProductPage({ params }: PageProps) {
               <div className="mb-6">
                 {product.originalPrice > product.price ? (
                   <div className="flex items-center gap-3 flex-wrap">
-                    <span className="text-orange-500 text-2xl md:text-3xl font-bold">
+                    <span className="text-sky-400 text-2xl md:text-3xl font-bold">
                       {formatPrice(product.price)}
                     </span>
                     <span className="text-gray-500 text-sm md:text-lg line-through">
                       {formatPrice(product.originalPrice)}
                     </span>
-                    <span className="bg-red-500 text-white text-xs md:text-sm px-2 py-1 rounded">
+                    <span className="bg-green-500 text-white text-xs md:text-sm px-2 py-1 rounded">
                       {product.discount}٪ تخفیف
                     </span>
                   </div>
                 ) : (
-                  <span className="text-orange-500 text-2xl md:text-3xl font-bold">
+                  <span className="text-sky-400 text-2xl md:text-3xl font-bold">
                     {formatPrice(product.price)}
                   </span>
                 )}
@@ -176,11 +225,11 @@ export default async function ProductPage({ params }: PageProps) {
               
               {product.features && product.features.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-white font-semibold mb-3 text-lg">ویژگی‌ها:</h3>
+                  <h3 className="text-gray-100 font-semibold mb-3 text-lg">ویژگی‌ها:</h3>
                   <ul className="space-y-2">
                     {product.features.map((feature: string, index: number) => (
                       <li key={index} className="text-gray-400 flex items-start gap-2">
-                        <span className="w-1.5 h-1.5 bg-orange-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <span className="w-1.5 h-1.5 bg-sky-400 rounded-full mt-2 flex-shrink-0"></span>
                         <span>{feature}</span>
                       </li>
                     ))}
@@ -201,22 +250,77 @@ export default async function ProductPage({ params }: PageProps) {
                   </div>
                 )}
               </div>
-              
+
+              {/* Quantity Selector */}
+              {product.inStock && (
+                <div className="mb-6">
+                  <label className="block text-gray-100 text-sm font-semibold mb-3">تعداد:</label>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="w-10 h-10 bg-gray-700 text-gray-100 rounded-lg hover:bg-gray-600 transition-colors"
+                    >
+                      -
+                    </button>
+                    <span className="text-gray-100 text-lg font-semibold w-12 text-center">{quantity}</span>
+                    <button
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="w-10 h-10 bg-gray-700 text-gray-100 rounded-lg hover:bg-gray-600 transition-colors"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Cart Button with Status */}
               <button
+                onClick={handleAddToCart}
                 disabled={!product.inStock}
                 className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
                   product.inStock
-                    ? 'bg-orange-500 hover:bg-orange-600 text-white cursor-pointer transform hover:scale-105'
-                    : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                    ? 'bg-green-500 hover:bg-green-600 text-white cursor-pointer transform hover:scale-105'
+                    : 'bg-gray-700 text-gray-500 cursor-not-allowed'
                 }`}
               >
                 <ShoppingCartIcon className="h-5 w-5" />
-                {product.inStock ? 'افزودن به سبد خرید' : 'ناموجود'}
+                {product.inStock 
+                  ? currentQuantityInCart > 0 
+                    ? `افزودن مجدد به سبد خرید (${currentQuantityInCart} عدد در سبد)`
+                    : 'افزودن به سبد خرید'
+                  : 'ناموجود'
+                }
               </button>
+
+              {/* View Cart Link */}
+              {currentQuantityInCart > 0 && (
+                <Link
+                  href="/cart"
+                  className="block text-center mt-4 text-sky-400 hover:text-sky-300 text-sm transition-colors"
+                >
+                  مشاهده سبد خرید
+                </Link>
+              )}
             </div>
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes slideIn {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        .animate-slide-in {
+          animation: slideIn 0.3s ease-out;
+        }
+      `}</style>
     </div>
   );
 }

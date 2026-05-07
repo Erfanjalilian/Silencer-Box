@@ -48,10 +48,10 @@ const Hero: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="relative w-full h-[500px] md:h-[600px] bg-gray-900 flex items-center justify-center">
+      <div className="relative w-full h-[500px] md:h-[600px] bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
-          <p className="text-white mt-4">در حال بارگذاری...</p>
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-sky-500 border-t-transparent"></div>
+          <p className="text-gray-100 mt-4">در حال بارگذاری...</p>
         </div>
       </div>
     );
@@ -59,7 +59,7 @@ const Hero: React.FC = () => {
 
   if (error || !heroData) {
     return (
-      <div className="relative w-full h-[500px] md:h-[600px] bg-gray-900 flex items-center justify-center">
+      <div className="relative w-full h-[500px] md:h-[600px] bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-500 text-lg">{error || 'خطا در بارگذاری'}</p>
         </div>
@@ -84,17 +84,17 @@ const Hero: React.FC = () => {
               onError={() => setImageError(true)}
             />
           </div>
-          {/* Black Semi-transparent Overlay with RGBA */}
+          {/* Dark Semi-transparent Overlay with RGBA */}
           <div className="absolute inset-0 bg-black/60"></div>
         </>
       ) : (
         <>
           {/* Gradient Background when no image */}
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"></div>
           {/* Icon Placeholder */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
-              <PhotoIcon className="h-32 w-32 md:h-48 md:w-48 text-orange-500/30 mx-auto mb-4" />
+              <PhotoIcon className="h-32 w-32 md:h-48 md:w-48 text-sky-500/30 mx-auto mb-4" />
               <p className="text-gray-500 text-sm">تصویر در حال بارگذاری</p>
             </div>
           </div>
@@ -121,7 +121,7 @@ const Hero: React.FC = () => {
           {/* CTA Button */}
           <Link
             href={heroData.buttonLink}
-            className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 md:px-8 md:py-4 rounded-lg transition-all duration-300 transform hover:scale-105 animate-fade-in-up animation-delay-400"
+            className="inline-block bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 md:px-8 md:py-4 rounded-lg transition-all duration-300 transform hover:scale-105 animate-fade-in-up animation-delay-400"
           >
             {heroData.buttonText}
           </Link>
