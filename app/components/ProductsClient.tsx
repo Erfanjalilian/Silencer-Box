@@ -9,7 +9,7 @@ import ProductCard from './ProductCard';
 interface Product {
   id: string;
   name: string;
-  price: number;
+  price: number | null; // ✅ اضافه کردن null به type
   originalPrice: number;
   discount: number;
   rating: number;
@@ -60,6 +60,14 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts, total,
     { value: 'rating_desc', label: 'بالاترین امتیاز' }
   ];
 
+  // ✅ اصلاح شده: تابع formatPrice با اعتبارسنجی کامل
+  const formatPrice = (price: number | null | undefined): string => {
+    if (price === null || price === undefined || isNaN(price)) {
+      return 'تماس بگیرید';
+    }
+    return price.toLocaleString('fa-IR') + ' تومان';
+  };
+
   // Fetch products when filters change
   useEffect(() => {
     const fetchProducts = async () => {
@@ -81,9 +89,12 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts, total,
       try {
         const response = await fetch(`/api/products?${params.toString()}`);
         const data = await response.json();
-        setProducts(data.products || data);
+        // ✅ اطمینان از اینکه products همیشه آرایه است
+        const fetchedProducts = data.products || data || [];
+        setProducts(fetchedProducts);
       } catch (error) {
         console.error('Error fetching products:', error);
+        setProducts([]);
       } finally {
         setLoading(false);
       }
@@ -127,12 +138,8 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts, total,
            currentFilters.sortBy !== 'newest';
   };
 
-  const formatPrice = (price: number) => {
-    return price.toLocaleString('fa-IR') + ' تومان';
-  };
-
   const displayProducts = products;
-  const displayTotal = products.length;
+  const displayTotal = products?.length || 0;
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -163,7 +170,7 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts, total,
                       onChange={(e) => updateFilters({ category: e.target.value })}
                       className="w-4 h-4 text-sky-500 focus:ring-sky-500"
                     />
-                    <span className="text-gray-400 text-sm">{categoryNames[cat]}</span>
+                    <span className="text-gray-400 text-sm">{categoryNames[cat] || cat}</span>
                   </label>
                 ))}
               </div>
@@ -321,7 +328,7 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts, total,
                         }}
                         className="w-4 h-4 text-sky-500 focus:ring-sky-500"
                       />
-                      <span className="text-gray-400 text-sm">{categoryNames[cat]}</span>
+                      <span className="text-gray-400 text-sm">{categoryNames[cat] || cat}</span>
                     </label>
                   ))}
                 </div>
