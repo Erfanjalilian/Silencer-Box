@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { PhotoIcon } from '@heroicons/react/24/outline';
+import { PhotoIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
 interface Product {
@@ -27,6 +27,109 @@ interface ProductFormProps {
   mode: 'add' | 'edit';
   initialProduct?: Product;
 }
+
+// کامپوننت آپلودر تصویر (داخلی)
+const ImageUploader: React.FC<{
+  onImageUploaded: (url: string) => void;
+  currentImage?: string;
+  onImageRemove?: () => void;
+}> = ({ onImageUploaded, currentImage, onImageRemove }) => {
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState(currentImage || '');
+  const [error, setError] = useState('');
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      setError('فرمت فایل باید JPEG، PNG یا WebP باشد');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError('حجم فایل نباید بیشتر از 5 مگابایت باشد');
+      return;
+    }
+
+    setError('');
+    setUploading(true);
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setPreview(data.url);
+        onImageUploaded(data.url);
+      } else {
+        setError(data.error || 'خطا در آپلود');
+      }
+    } catch (error) {
+      setError('خطا در ارتباط با سرور');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleRemove = () => {
+    setPreview('');
+    onImageUploaded('');
+    if (onImageRemove) onImageRemove();
+  };
+
+  return (
+    <div className="border-2 border-dashed border-gray-700 rounded-lg p-4 text-center bg-gray-900/50">
+      {error && (
+        <div className="mb-3 p-2 bg-red-500/20 border border-red-500/50 rounded text-red-400 text-sm">
+          {error}
+        </div>
+      )}
+      
+      {preview ? (
+        <div className="relative">
+          <img 
+            src={preview} 
+            alt="Preview" 
+            className="max-h-48 mx-auto rounded-lg object-contain"
+          />
+          <button
+            type="button"
+            onClick={handleRemove}
+            className="absolute top-2 right-2 p-1 bg-red-500 rounded-full hover:bg-red-600 transition-colors"
+          >
+            <XMarkIcon className="w-5 h-5 text-white" />
+          </button>
+          <p className="text-green-400 text-xs mt-2">✓ عکس با موفقیت آپلود شد</p>
+        </div>
+      ) : (
+        <label className="cursor-pointer block">
+          <input
+            type="file"
+            accept="image/jpeg,image/jpg,image/png,image/webp"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <PhotoIcon className="w-12 h-12 text-gray-500 mx-auto mb-2" />
+          <p className="text-gray-400 text-sm">
+            {uploading ? 'در حال آپلود...' : 'برای آپلود عکس کلیک کنید'}
+          </p>
+          <p className="text-gray-500 text-xs mt-1">
+            فرمت‌های مجاز: JPEG, PNG, WebP | حداکثر 5 مگابایت
+          </p>
+        </label>
+      )}
+    </div>
+  );
+};
 
 const ProductForm: React.FC<ProductFormProps> = ({ mode, initialProduct }) => {
   const router = useRouter();
@@ -90,8 +193,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, initialProduct }) => {
 
     try {
       const url = mode === 'add' 
-        ? '/api/admin/products' 
-        : `/api/admin/products/${initialProduct?.id}`;
+        ? '/api/products' 
+        : `/api/products/${initialProduct?.id}`;
       
       const method = mode === 'add' ? 'POST' : 'PUT';
       
@@ -200,20 +303,25 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, initialProduct }) => {
           />
         </div>
 
-        {/* آدرس تصویر */}
+        {/* ✅ بخش آپلود عکس - جایگزین شده */}
         <div className="md:col-span-2">
           <label className="block text-gray-300 text-sm font-semibold mb-2">
-            آدرس تصویر محصول
+            عکس محصول
           </label>
-          <input
-            type="text"
-            name="imageUrl"
-            value={formData.imageUrl}
-            onChange={handleChange}
-            placeholder="https://example.com/image.jpg"
-            className="w-full bg-gray-900 text-gray-100 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-sky-500 border border-gray-700"
+          <ImageUploader
+            onImageUploaded={(url) => {
+              setFormData(prev => ({ ...prev, imageUrl: url }));
+            }}
+            currentImage={formData.imageUrl}
+            onImageRemove={() => {
+              setFormData(prev => ({ ...prev, imageUrl: '' }));
+            }}
           />
-          <p className="text-gray-500 text-xs mt-1">در صورت خالی گذاشتن، جایگزین نمایش داده می‌شود</p>
+          {formData.imageUrl && (
+            <p className="text-gray-500 text-xs mt-2">
+              لینک فعلی: {formData.imageUrl}
+            </p>
+          )}
         </div>
 
         {/* توضیحات */}

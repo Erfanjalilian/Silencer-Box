@@ -47,7 +47,7 @@ const AdminProductsClient: React.FC<AdminProductsClientProps> = ({ initialProduc
     
     setDeleting(true);
     try {
-      const response = await fetch(`/api/admin/products/${selectedProduct.id}`, {
+      const response = await fetch(`/api/products/${selectedProduct.id}`, {
         method: 'DELETE',
       });
       

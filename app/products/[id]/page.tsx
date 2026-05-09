@@ -1,4 +1,4 @@
-// app/products/[id]/page.tsx (Updated with Cart functionality)
+// app/products/[id]/page.tsx (اصلاح شده)
 'use client';
 
 import { notFound, useParams } from 'next/navigation';
@@ -30,12 +30,12 @@ async function getProduct(id: string): Promise<Product | null> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     
-    const response = await fetch(`${baseUrl}/api/products`, {
-      method: 'POST',
+    // ✅ اصلاح: استفاده از GET با آیدی در مسیر (نه POST)
+    const response = await fetch(`${baseUrl}/api/products/${id}`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id }),
       next: {
         revalidate: 60
       }
@@ -99,6 +99,39 @@ export default function ProductPage() {
 
   const currentQuantityInCart = product ? getItemQuantity(product.id) : 0;
 
+  // ✅ اصلاح شده: تابع رندر ستاره با اعتبارسنجی
+  const renderStars = () => {
+    // اعتبارسنجی rating
+    let rating = product?.rating || 0;
+    if (isNaN(rating) || rating < 0) rating = 0;
+    if (rating > 5) rating = 5;
+    
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = Math.max(0, 5 - fullStars - (hasHalfStar ? 1 : 0));
+    
+    return (
+      <div className="flex items-center gap-1">
+        {[...Array(fullStars)].map((_, i) => (
+          <StarSolidIcon key={`full-${i}`} className="h-5 w-5 text-yellow-500" />
+        ))}
+        {hasHalfStar && (
+          <StarIcon className="h-5 w-5 text-yellow-500" />
+        )}
+        {[...Array(emptyStars)].map((_, i) => (
+          <StarIcon key={`empty-${i}`} className="h-5 w-5 text-gray-600" />
+        ))}
+        <span className="text-gray-400 text-sm mr-2">({product?.reviewCount || 0} نظر)</span>
+      </div>
+    );
+  };
+  
+  const formatPrice = (price: number) => {
+    // ✅ اصلاح: بررسی null و undefined
+    if (!price && price !== 0) return 'تماس بگیرید';
+    return price.toLocaleString('fa-IR') + ' تومان';
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center">
@@ -116,31 +149,6 @@ export default function ProductPage() {
 
   const hasImage = product.imageUrl && product.imageUrl.trim() !== '';
   
-  const renderStars = () => {
-    const fullStars = Math.floor(product.rating);
-    const hasHalfStar = product.rating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-    
-    return (
-      <div className="flex items-center gap-1">
-        {[...Array(fullStars)].map((_, i) => (
-          <StarSolidIcon key={`full-${i}`} className="h-5 w-5 text-yellow-500" />
-        ))}
-        {hasHalfStar && (
-          <StarIcon className="h-5 w-5 text-yellow-500" />
-        )}
-        {[...Array(emptyStars)].map((_, i) => (
-          <StarIcon key={`empty-${i}`} className="h-5 w-5 text-gray-600" />
-        ))}
-        <span className="text-gray-400 text-sm mr-2">({product.reviewCount} نظر)</span>
-      </div>
-    );
-  };
-  
-  const formatPrice = (price: number) => {
-    return price.toLocaleString('fa-IR') + ' تومان';
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
       <div className="h-16 md:h-20"></div>
@@ -200,7 +208,7 @@ export default function ProductPage() {
               <div className="mb-4">{renderStars()}</div>
               
               <div className="mb-6">
-                {product.originalPrice > product.price ? (
+                {product.originalPrice && product.originalPrice > product.price ? (
                   <div className="flex items-center gap-3 flex-wrap">
                     <span className="text-sky-400 text-2xl md:text-3xl font-bold">
                       {formatPrice(product.price)}

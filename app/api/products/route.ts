@@ -1,121 +1,153 @@
 // app/api/products/route.ts
 import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
+import fs from 'fs';
+import path from 'path';
 
-const productsData = [
-  {
-    id: '1',
-    name: 'SilentBox آپارتمانی',
-    price: 12500000,
-    originalPrice: 15800000,
-    discount: 21,
-    rating: 4.8,
-    reviewCount: 124,
-    description: 'جعبه صدای ضد صدا مخصوص ماینرهای آپارتمانی با عایق‌بندی پیشرفته و سیستم خنک‌کننده هوشمند',
-    features: [
-      'عایق‌بندی صدای ۹۵٪',
-      'سیستم خنک‌کننده اتوماتیک',
-      'قابلیت نصب ۲ دستگاه ماینر',
-      'ابعاد: ۸۰×۶۰×۷۰ سانتی‌متر'
-    ],
-    imageUrl: '',
-    category: 'silentbox',
-    inStock: true,
-    isBestSeller: true,
-    badge: 'پرفروش‌ترین'
-  },
-  {
-    id: '2',
-    name: 'SilentBox مخصوص ماینر M30',
-    price: 18900000,
-    originalPrice: 23500000,
-    discount: 20,
-    rating: 4.9,
-    reviewCount: 89,
-    description: 'جعبه صدای اختصاصی برای ماینرهای M30 با طراحی ارگونومیک و صدابرداری فوق‌العاده',
-    features: [
-      'مناسب برای ماینر M30',
-      'کاهش صدا تا ۹۸٪',
-      'سیستم تهویه پیشرفته',
-      'نصب آسان و سریع'
-    ],
-    imageUrl: '',
-    category: 'silentbox',
-    inStock: true,
-    isBestSeller: true,
-    badge: 'پرفروش‌ترین'
-  },
-  {
-    id: '3',
-    name: 'شیر قطع کن هوا',
-    price: 2850000,
-    originalPrice: 3500000,
-    discount: 18,
-    rating: 4.6,
-    reviewCount: 56,
-    description: 'شیر قطع کن هوا با کیفیت بالا برای سیستم‌های تهویه ماینرها، ساخت آلمان',
-    features: [
-      'جنس باکیفیت و ضد زنگ',
-      'اتصال آسان',
-      'طول عمر بالا',
-      'ساخت آلمان'
-    ],
-    imageUrl: '',
-    category: 'accessory',
-    inStock: true,
-    isBestSeller: false,
-    badge: null
-  },
-  {
-    id: '4',
-    name: 'فن حلزونی (سانتریفیوژ)',
-    price: 4250000,
-    originalPrice: 5500000,
-    discount: 22,
-    rating: 4.7,
-    reviewCount: 78,
-    description: 'فن سانتریفیوژ قدرتمند برای خنک‌سازی بهینه ماینرها با مصرف انرژی پایین',
-    features: [
-      'سرعت قابل تنظیم',
-      'مصرف انرژی ۴۵ وات',
-      'جریان هوای ۲۵۰ CFM',
-      'صدای بسیار کم'
-    ],
-    imageUrl: '',
-    category: 'accessory',
-    inStock: true,
-    isBestSeller: true,
-    badge: 'ویژه'
-  },
-  {
-    id: '5',
-    name: 'SilentBox صنعتی',
-    price: 26500000,
-    originalPrice: 32000000,
-    discount: 17,
-    rating: 4.9,
-    reviewCount: 45,
-    description: 'جعبه صدای صنعتی مناسب برای مزارع استخراج با ظرفیت ۴ دستگاه ماینر',
-    features: [
-      'ظرفیت ۴ ماینر',
-      'سیستم خنک‌سازی حرفه‌ای',
-      'عایق ۹۹٪ صدا',
-      'قابلیت اتصال به داکت مرکزی'
-    ],
-    imageUrl: '',
-    category: 'silentbox',
-    inStock: false,
-    isBestSeller: false,
-    badge: null
+// مسیر فایل JSON برای ذخیره محصولات
+const productsFilePath = path.join(process.cwd(), 'products.json');
+
+// تابع برای خواندن محصولات از فایل JSON
+function getProducts(): any[] {
+  try {
+    if (!fs.existsSync(productsFilePath)) {
+      // اگر فایل وجود نداشت، داده‌های اولیه را بنویس
+      const initialProducts = [
+        {
+          id: '1',
+          name: 'SilentBox آپارتمانی',
+          price: 12500000,
+          originalPrice: 15800000,
+          discount: 21,
+          rating: 4.8,
+          reviewCount: 124,
+          description: 'جعبه صدای ضد صدا مخصوص ماینرهای آپارتمانی با عایق‌بندی پیشرفته و سیستم خنک‌کننده هوشمند',
+          features: [
+            'عایق‌بندی صدای ۹۵٪',
+            'سیستم خنک‌کننده اتوماتیک',
+            'قابلیت نصب ۲ دستگاه ماینر',
+            'ابعاد: ۸۰×۶۰×۷۰ سانتی‌متر'
+          ],
+          imageUrl: '',
+          category: 'silentbox',
+          inStock: true,
+          isBestSeller: true,
+          badge: 'پرفروش‌ترین'
+        },
+        {
+          id: '2',
+          name: 'SilentBox مخصوص ماینر M30',
+          price: 18900000,
+          originalPrice: 23500000,
+          discount: 20,
+          rating: 4.9,
+          reviewCount: 89,
+          description: 'جعبه صدای اختصاصی برای ماینرهای M30 با طراحی ارگونومیک و صدابرداری فوق‌العاده',
+          features: [
+            'مناسب برای ماینر M30',
+            'کاهش صدا تا ۹۸٪',
+            'سیستم تهویه پیشرفته',
+            'نصب آسان و سریع'
+          ],
+          imageUrl: '',
+          category: 'silentbox',
+          inStock: true,
+          isBestSeller: true,
+          badge: 'پرفروش‌ترین'
+        },
+        {
+          id: '3',
+          name: 'شیر قطع کن هوا',
+          price: 2850000,
+          originalPrice: 3500000,
+          discount: 18,
+          rating: 4.6,
+          reviewCount: 56,
+          description: 'شیر قطع کن هوا با کیفیت بالا برای سیستم‌های تهویه ماینرها، ساخت آلمان',
+          features: [
+            'جنس باکیفیت و ضد زنگ',
+            'اتصال آسان',
+            'طول عمر بالا',
+            'ساخت آلمان'
+          ],
+          imageUrl: '',
+          category: 'accessory',
+          inStock: true,
+          isBestSeller: false,
+          badge: null
+        },
+        {
+          id: '4',
+          name: 'فن حلزونی (سانتریفیوژ)',
+          price: 4250000,
+          originalPrice: 5500000,
+          discount: 22,
+          rating: 4.7,
+          reviewCount: 78,
+          description: 'فن سانتریفیوژ قدرتمند برای خنک‌سازی بهینه ماینرها با مصرف انرژی پایین',
+          features: [
+            'سرعت قابل تنظیم',
+            'مصرف انرژی ۴۵ وات',
+            'جریان هوای ۲۵۰ CFM',
+            'صدای بسیار کم'
+          ],
+          imageUrl: '',
+          category: 'accessory',
+          inStock: true,
+          isBestSeller: true,
+          badge: 'ویژه'
+        },
+        {
+          id: '5',
+          name: 'SilentBox صنعتی',
+          price: 26500000,
+          originalPrice: 32000000,
+          discount: 17,
+          rating: 4.9,
+          reviewCount: 45,
+          description: 'جعبه صدای صنعتی مناسب برای مزارع استخراج با ظرفیت ۴ دستگاه ماینر',
+          features: [
+            'ظرفیت ۴ ماینر',
+            'سیستم خنک‌سازی حرفه‌ای',
+            'عایق ۹۹٪ صدا',
+            'قابلیت اتصال به داکت مرکزی'
+          ],
+          imageUrl: '',
+          category: 'silentbox',
+          inStock: false,
+          isBestSeller: false,
+          badge: null
+        }
+      ];
+      fs.writeFileSync(productsFilePath, JSON.stringify(initialProducts, null, 2));
+      return initialProducts;
+    }
+    
+    const data = fs.readFileSync(productsFilePath, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error reading products file:', error);
+    return [];
   }
-];
+}
 
+// تابع برای نوشتن محصولات در فایل JSON
+function saveProducts(products: any[]) {
+  try {
+    fs.writeFileSync(productsFilePath, JSON.stringify(products, null, 2));
+  } catch (error) {
+    console.error('Error saving products file:', error);
+  }
+}
+
+// GET - گرفتن لیست محصولات (با فیلترها)
 export async function GET(request: NextRequest) {
   try {
+    const productsData = getProducts();
     const searchParams = request.nextUrl.searchParams;
     const getAll = searchParams.get('getAll');
     
-    // If getAll is not true, return best sellers (for homepage)
+    // اگر getAll true نباشه، فقط محصولات پرفروش رو برگردون (برای صفحه اصلی)
     if (getAll !== 'true') {
       const bestSellers = productsData.filter(product => product.isBestSeller === true);
       return NextResponse.json(bestSellers, {
@@ -126,7 +158,7 @@ export async function GET(request: NextRequest) {
       });
     }
     
-    // Apply filters for products page
+    // اعمال فیلترها برای صفحه محصولات
     const category = searchParams.get('category');
     const minPrice = searchParams.get('minPrice');
     const maxPrice = searchParams.get('maxPrice');
@@ -195,30 +227,85 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// IMPORTANT: Fix the POST method to properly handle single product requests
-export async function POST(request: Request) {
+// ✅ POST - اضافه کردن محصول جدید (ذخیره در فایل JSON)
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id } = body;
+    const productsData = getProducts();
     
-    console.log('Looking for product with ID:', id); // Debug log
+    // تولید ID جدید
+    const maxId = productsData.length > 0 
+      ? Math.max(...productsData.map(p => parseInt(p.id))) 
+      : 0;
+    const newId = (maxId + 1).toString();
     
-    const product = productsData.find(product => product.id === id);
+    const newProduct = {
+      id: newId,
+      name: body.name,
+      price: body.price,
+      originalPrice: body.originalPrice,
+      discount: body.discount || 0,
+      rating: 0,
+      reviewCount: 0,
+      description: body.description || '',
+      features: body.features || [],
+      imageUrl: body.imageUrl || '',
+      category: body.category || 'silentbox',
+      inStock: body.inStock ?? true,
+      isBestSeller: body.isBestSeller ?? false,
+      badge: body.badge || null,
+    };
     
-    if (!product) {
-      console.log('Product not found for ID:', id); // Debug log
+    productsData.push(newProduct);
+    saveProducts(productsData);
+    
+    return NextResponse.json(
+      { message: 'محصول با موفقیت اضافه شد', product: newProduct },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error('Error in POST:', error);
+    return NextResponse.json(
+      { error: 'خطا در ایجاد محصول' },
+      { status: 500 }
+    );
+  }
+}
+
+// ✅ DELETE - حذف محصول از فایل JSON
+export async function DELETE(request: NextRequest) {
+  try {
+    const url = new URL(request.url);
+    const id = url.searchParams.get('id');
+    
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Product ID is required' },
+        { status: 400 }
+      );
+    }
+    
+    let productsData = getProducts();
+    const initialLength = productsData.length;
+    productsData = productsData.filter(p => p.id !== id);
+    
+    if (productsData.length === initialLength) {
       return NextResponse.json(
         { error: 'Product not found' },
         { status: 404 }
       );
     }
     
-    console.log('Product found:', product.name); // Debug log
-    return NextResponse.json(product, { status: 200 });
-  } catch (error) {
-    console.error('Error in POST:', error);
+    saveProducts(productsData);
+    
     return NextResponse.json(
-      { error: 'Failed to fetch product' },
+      { message: 'Product deleted successfully' },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error in DELETE:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete product' },
       { status: 500 }
     );
   }
