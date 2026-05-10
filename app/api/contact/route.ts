@@ -1,5 +1,7 @@
 // app/api/contact/route.ts
 import { NextResponse } from 'next/server';
+import { promises as fs } from 'fs';
+import path from 'path';
 
 const contactData = {
   title: 'تماس با ما | سیلنت‌باکس',
@@ -111,6 +113,28 @@ const contactData = {
   }
 };
 
+// مسیر فایل contacts.json در ریشه پروژه
+const contactsFilePath = path.join(process.cwd(), 'contacts.json');
+
+// تابع برای خواندن پیام‌ها از فایل
+async function getMessages() {
+  try {
+    const data = await fs.readFile(contactsFilePath, 'utf-8');
+    return JSON.parse(data);
+  } catch (error: any) {
+    // اگر فایل وجود نداشت، یک آرایه خالی برمی‌گردونیم
+    if (error.code === 'ENOENT') {
+      return [];
+    }
+    throw error;
+  }
+}
+
+// تابع برای ذخیره پیام‌ها در فایل
+async function saveMessages(messages: any[]) {
+  await fs.writeFile(contactsFilePath, JSON.stringify(messages, null, 2), 'utf-8');
+}
+
 export async function GET() {
   try {
     return NextResponse.json(contactData, {
@@ -141,10 +165,29 @@ export async function POST(request: Request) {
       );
     }
     
-    // In a real application, you would:
-    // 1. Save to database
-    // 2. Send email notification
-    // 3. Send to CRM
+    // خواندن پیام‌های موجود
+    const messages = await getMessages();
+    
+    // ایجاد پیام جدید
+    const newMessage = {
+      id: Date.now().toString(),
+      name,
+      email,
+      phone: phone || '',
+      subject,
+      message,
+      status: 'pending', // pending, read, replied
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    
+    // اضافه کردن به ابتدای آرایه (جدیدترین اول)
+    messages.unshift(newMessage);
+    
+    // ذخیره در فایل
+    await saveMessages(messages);
+    
+    console.log('Message saved successfully:', newMessage.id);
     
     return NextResponse.json(
       { 
@@ -154,6 +197,7 @@ export async function POST(request: Request) {
       { status: 200 }
     );
   } catch (error) {
+    console.error('Error saving message:', error);
     return NextResponse.json(
       { error: 'خطا در ارسال پیام. لطفاً مجدداً تلاش کنید.' },
       { status: 500 }
