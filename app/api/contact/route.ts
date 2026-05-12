@@ -20,13 +20,13 @@ const contactData = {
       sales: 'sales@silentbox.com'
     },
     phone: {
-      primary: '۰۲۱-۱۲۳۴۵۶۷۸',
-      support: '۰۲۱-۸۷۶۵۴۳۲۱',
-      mobile: '۰۹۱۲-۱۲۳-۴۵۶۷',
-      whatsapp: '۰۹۱۲-۱۲۳-۴۵۶۷'
+      primary: '۰۲۱۶۶۷۹۴۵۵۸',
+      support: '۰۲۱۶۶۷۹۴۵۵۸',
+      mobile: '۰۹۱۲۴۵۴۱۳۰۷',
+      whatsapp: '۰۹۱۲۴۵۴۱۳۰۷'
     },
     address: {
-      office: 'تهران، خیابان ولیعصر، پلاک ۱۲۳',
+      office: 'تهران،خیابان شاد آباد  خ سر حدی جنوبی کوچه ی چوپان  پلاک ۱۹',
       factory: 'شهرک صنعتی سیلنت، کیلومتر ۵ جاده مخصوص کرج، تهران',
       mapUrl: 'https://maps.google.com/?q=Tehran+Valiasr+Street'
     },

@@ -1,5 +1,7 @@
-// app/products/[id]/page.tsx (اصلاح شده)
+// app/products/[id]/page.tsx (اصلاح شده نهایی)
 'use client';
+
+export const dynamic = 'force-dynamic';
 
 import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
@@ -28,10 +30,8 @@ interface Product {
 
 async function getProduct(id: string): Promise<Product | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    
-    // ✅ اصلاح: استفاده از GET با آیدی در مسیر (نه POST)
-    const response = await fetch(`${baseUrl}/api/products/${id}`, {
+    // استفاده از آدرس نسبی (بدون localhost)
+    const response = await fetch(`/api/products/${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -99,9 +99,7 @@ export default function ProductPage() {
 
   const currentQuantityInCart = product ? getItemQuantity(product.id) : 0;
 
-  // ✅ اصلاح شده: تابع رندر ستاره با اعتبارسنجی
   const renderStars = () => {
-    // اعتبارسنجی rating
     let rating = product?.rating || 0;
     if (isNaN(rating) || rating < 0) rating = 0;
     if (rating > 5) rating = 5;
@@ -127,7 +125,6 @@ export default function ProductPage() {
   };
   
   const formatPrice = (price: number) => {
-    // ✅ اصلاح: بررسی null و undefined
     if (!price && price !== 0) return 'تماس بگیرید';
     return price.toLocaleString('fa-IR') + ' تومان';
   };
@@ -155,7 +152,6 @@ export default function ProductPage() {
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
         <div className="max-w-6xl mx-auto">
-          {/* Success Notification */}
           {showSuccess && (
             <div className="fixed top-20 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-slide-in">
               <CheckCircleIcon className="h-5 w-5" />
@@ -163,7 +159,6 @@ export default function ProductPage() {
             </div>
           )}
 
-          {/* Back Button */}
           <Link 
             href="/products" 
             className="inline-flex items-center gap-2 text-sky-400 hover:text-sky-300 mb-6 transition-colors"
@@ -175,7 +170,6 @@ export default function ProductPage() {
           </Link>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-            {/* Product Image */}
             <div className="relative h-80 md:h-96 rounded-xl overflow-hidden bg-gradient-to-br from-gray-700 to-gray-800">
               {hasImage ? (
                 <Image
@@ -193,7 +187,6 @@ export default function ProductPage() {
               )}
             </div>
             
-            {/* Product Info */}
             <div>
               <div className="mb-3">
                 <span className="inline-block bg-sky-500/10 text-sky-400 text-sm px-3 py-1 rounded-full">
@@ -259,7 +252,6 @@ export default function ProductPage() {
                 )}
               </div>
 
-              {/* Quantity Selector */}
               {product.inStock && (
                 <div className="mb-6">
                   <label className="block text-gray-100 text-sm font-semibold mb-3">تعداد:</label>
@@ -281,7 +273,6 @@ export default function ProductPage() {
                 </div>
               )}
 
-              {/* Cart Button with Status */}
               <button
                 onClick={handleAddToCart}
                 disabled={!product.inStock}
@@ -300,7 +291,6 @@ export default function ProductPage() {
                 }
               </button>
 
-              {/* View Cart Link */}
               {currentQuantityInCart > 0 && (
                 <Link
                   href="/cart"
