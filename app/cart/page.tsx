@@ -1,4 +1,4 @@
-// app/cart/page.tsx
+// app/cart/page.tsx and 
 'use client';
 
 import React from 'react';
