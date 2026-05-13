@@ -21,18 +21,18 @@ const contactData = {
     },
     phone: {
       primary: '۰۲۱۶۶۸۱۶۲۸۳',
-      support: '۰۲۱۶۶۷۹۴۵۵۸',
+      support: '۰۹۳۶۴۵۴۱۳۰۷',
       mobile: '۰۹۱۲۴۵۴۱۳۰۷',
       whatsapp: '۰۹۱۲۴۵۴۱۳۰۷'
     },
     address: {
       office: 'تهران،خیابان شاد آباد  خ سر حدی جنوبی کوچه ی چوپان ',
-      factory: 'شهرک صنعتی سیلنت، کیلومتر ۵ جاده مخصوص کرج، تهران',
+      factory: '',
       mapUrl: 'https://maps.google.com/?q=Tehran+Valiasr+Street'
     },
     workingHours: {
-      weekdays: 'شنبه تا چهارشنبه: ۹:۰۰ - ۱۸:۰۰',
-      thursday: 'پنجشنبه: ۹:۰۰ - ۱۴:۰۰',
+      weekdays: 'شنبه تا پنجشنبه: ۹:۰۰ - ۱۲:۰۰',
+      thursday: ' ۱۵:۰۰ - ۲۱:۰۰',
       friday: 'جمعه: تعطیل'
     }
   },
@@ -83,11 +83,11 @@ const contactData = {
   
   socialMedia: {
     title: 'ما را دنبال کنید',
-    instagram: 'https://instagram.com/silentbox',
-    twitter: 'https://twitter.com/silentbox',
-    linkedin: 'https://linkedin.com/company/silentbox',
-    telegram: 'https://t.me/silentbox',
-    whatsapp: 'https://wa.me/989121234567'
+    instagram: '۰۹۱۲۴۵۴۱۳۰۷',
+    twitter: '۰۹۱۲۴۵۴۱۳۰۷',
+    linkedin: '۰۹۱۲۴۵۴۱۳۰۷',
+    telegram: '۰۹۱۲۴۵۴۱۳۰۷',
+    whatsapp: '۰۹۱۲۴۵۴۱۳۰۷'
   },
   
   faq: {
@@ -95,7 +95,7 @@ const contactData = {
     items: [
       {
         question: 'زمان تحویل سفارش چقدر است؟',
-        answer: 'ما به تمام شهرها سفارشات را طی ۲ تا ۵ روز کاری بسته به موقعیت مکانی شما تحویل می‌دهیم.'
+        answer: '  طی،۱ روز نهایت ۲ روز ارسالی میشه'
       },
       {
         question: 'آیا به خارج از ایران ارسال دارید؟',
@@ -103,11 +103,11 @@ const contactData = {
       },
       {
         question: 'گارانتی محصولات چقدر است؟',
-        answer: 'همه محصولات سیلنت‌باکس دارای ۱۲ ماه گارانتی در برابر نقص ساخت هستند.'
+        answer: 'فقط،موتور شامل گارنتی ۲ ماه می باشد'
       },
       {
         question: 'آیا امکان بازگشت کالا وجود دارد؟',
-        answer: 'بله، می‌توانید محصولات را تا ۷ روز پس از تحویل، در صورت استفاده نشده و در بسته‌بندی اصلی، بازگردانید.'
+        answer: 'در ۲۴ ساعت ۹۰ درصد پول برگشت می خوره و بیش از ۴۸ ساعت ۶۰ درصد پول برگشت می خوره'
       }
     ]
   }
