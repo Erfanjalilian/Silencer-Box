@@ -291,7 +291,7 @@ export default function ContactPage() {
                   onClick={() => copyToClipboard(contactData.contactInfo.email.sales, 'ایمیل فروش')}
                   className="text-gray-400 text-sm cursor-pointer hover:text-sky-400 transition-colors"
                 >
-                  فروش: {contactData.contactInfo.email.sales}
+                  {contactData.contactInfo.email.sales}
                 </p>
                 <p 
                   onClick={() => copyToClipboard(contactData.contactInfo.email.support, 'ایمیل پشتیبانی')}
@@ -303,7 +303,7 @@ export default function ContactPage() {
                   onClick={() => copyToClipboard(contactData.contactInfo.email.primary, 'ایمیل اطلاعات')}
                   className="text-gray-400 text-sm cursor-pointer hover:text-sky-400 transition-colors"
                 >
-                  اطلاعات: {contactData.contactInfo.email.primary}
+                  {contactData.contactInfo.email.primary}
                 </p>
               </div>
             </div>

@@ -74,8 +74,8 @@
   {
     "id": "9",
     "name": "فروش قطع کن بادی هوشمند",
-    "price": 170000,
-    "originalPrice": 202000,
+    "price": 200000,
+    "originalPrice": 220000,
     "discount": 11,
     "discountPercent": 13,
     "rating": 4.5,
@@ -128,7 +128,7 @@
   {
     "id": "12",
     "name": "سایلنت باکس برای دستگاه‌های سری m هست بدون کنترل از راه دور",
-    "price": 12000000,
+    "price": 1050000,
     "originalPosition": 12120000,
     "originalPrice": 12120000,
     "discount": 1,

@@ -123,7 +123,7 @@ const Footer: React.FC = () => {
               </li>
               <li className="flex items-center gap-3 text-gray-400">
                 <PhoneArrowDownLeftIcon className="h-5 w-5 text-sky-400 flex-shrink-0" />
-                <span className="text-sm">۰۲۱۶۶۷۹۴۵۵۸</span>
+                <span className="text-sm">02166816283</span>
               </li>
               <li className="flex items-center gap-3 text-gray-400">
                 <EnvelopeIcon className="h-5 w-5 text-sky-400 flex-shrink-0" />

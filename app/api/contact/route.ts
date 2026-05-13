@@ -15,9 +15,9 @@ const contactData = {
   
   contactInfo: {
     email: {
-      primary: 'info@silentbox.com',
-      support: 'support@silentbox.com',
-      sales: 'sales@silentbox.com'
+      primary: '',
+      support: 'Siavash.m2020@gmail.com',
+      sales: ''
     },
     phone: {
       primary: '۰۲۱۶۶۸۱۶۲۸۳',
