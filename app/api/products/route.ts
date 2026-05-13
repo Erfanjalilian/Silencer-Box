@@ -73,7 +73,7 @@ function getProducts(): any[] {
           imageUrl: '',
           category: 'accessory',
           inStock: true,
-          isBestSeller: false,
+          isBestSeller: true,
           badge: null
         },
         {
@@ -115,7 +115,7 @@ function getProducts(): any[] {
           imageUrl: '',
           category: 'silentbox',
           inStock: false,
-          isBestSeller: false,
+          isBestSeller: true,
           badge: null
         }
       ];

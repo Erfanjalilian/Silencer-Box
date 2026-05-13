@@ -10,7 +10,8 @@ import {
   PlusIcon, 
   MinusIcon,
   ArrowRightIcon,
-  ShoppingBagIcon
+  ShoppingBagIcon,
+  CubeIcon
 } from '@heroicons/react/24/outline';
 import { useCart } from '@/contexts/CartContext';
 
@@ -22,9 +23,13 @@ export default function CartPage() {
   };
 
   const subtotal = getCartTotal();
-  const shipping = subtotal > 1000000 ? 0 : 50000;
-  const tax = subtotal * 0.09; // 9% tax
-  const total = subtotal + shipping + tax;
+  
+  // هزینه بسته‌بندی: 250,000 تومان به ازای هر محصول
+  const packagingCostPerItem = 250000;
+  const totalPackagingCost = cart.length * packagingCostPerItem;
+  
+  // جمع کل با احتساب هزینه بسته‌بندی
+  const total = subtotal + totalPackagingCost;
 
   if (cart.length === 0) {
     return (
@@ -131,6 +136,14 @@ export default function CartPage() {
                                 </span>
                               </div>
                             )}
+                            
+                            {/* هزینه بسته‌بندی هر محصول */}
+                            <div className="flex items-center gap-1 mt-2">
+                              <CubeIcon className="h-3 w-3 text-gray-500" />
+                              <span className="text-gray-500 text-xs">
+                                هزینه بسته‌بندی: {formatPrice(packagingCostPerItem)}
+                              </span>
+                            </div>
                           </div>
 
                           {/* Total Price */}
@@ -199,14 +212,23 @@ export default function CartPage() {
                     <span>مجموع سبد خرید</span>
                     <span>{formatPrice(subtotal)}</span>
                   </div>
+                  
+                  {/* هزینه بسته‌بندی */}
                   <div className="flex justify-between text-gray-400">
-                    <span>هزینه ارسال</span>
-                    <span>{shipping === 0 ? 'رایگان' : formatPrice(shipping)}</span>
+                    <div className="flex items-center gap-1">
+                      <CubeIcon className="h-4 w-4" />
+                      <span>هزینه بسته‌بندی {cart.length > 1 ? `(${cart.length} عدد)` : ''}</span>
+                    </div>
+                    <span>{formatPrice(totalPackagingCost)}</span>
                   </div>
-                  <div className="flex justify-between text-gray-400">
-                    <span>مالیات (۹٪)</span>
-                    <span>{formatPrice(tax)}</span>
-                  </div>
+                  
+                  {/* توضیح هزینه بسته‌بندی هر محصول */}
+                  {cart.length > 0 && (
+                    <div className="text-xs text-gray-500 pr-5">
+                      {cart.length} محصول × {formatPrice(packagingCostPerItem)} = {formatPrice(totalPackagingCost)}
+                    </div>
+                  )}
+                  
                   <div className="border-t border-gray-700 pt-3 mt-3">
                     <div className="flex justify-between text-gray-100 font-bold text-lg">
                       <span>جمع کل</span>
@@ -215,13 +237,12 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                {shipping > 0 && subtotal > 0 && (
-                  <div className="bg-sky-500/10 border border-sky-500/30 rounded-lg p-3 mb-6">
-                    <p className="text-sky-400 text-sm text-center">
-                      🚚 با خرید {formatPrice(1000000 - subtotal)} تومان دیگر، ارسال شما رایگان می‌شود!
-                    </p>
-                  </div>
-                )}
+                {/* اطلاعیه هزینه بسته‌بندی */}
+                <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mb-6">
+                  <p className="text-blue-400 text-sm text-center">
+                    📦 هزینه بسته‌بندی {formatPrice(packagingCostPerItem)} تومان به ازای هر محصول محاسبه شده است
+                  </p>
+                </div>
 
                 <button
                   className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-105 mb-3"

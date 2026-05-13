@@ -46,10 +46,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     const emptyStars = Math.max(0, 5 - fullStars - (hasHalfStar ? 1 : 0));
-    
-    const reviewCount = product.reviewCount && !isNaN(product.reviewCount) 
-      ? product.reviewCount 
-      : 0;
 
     return (
       <div className="flex items-center gap-1">
@@ -62,7 +58,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {[...Array(emptyStars)].map((_, i) => (
           <StarIcon key={`empty-${i}`} className="h-3 md:h-4 w-3 md:w-4 text-gray-600" />
         ))}
-        <span className="text-gray-400 text-xs mr-2">({reviewCount})</span>
+        {/* reviewCount حذف شد - نمایش تعداد نظرات وجود ندارد */}
       </div>
     );
   };
