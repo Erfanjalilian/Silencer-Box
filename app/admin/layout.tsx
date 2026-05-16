@@ -1,5 +1,8 @@
 // app/admin/layout.tsx
 import React from 'react';
+
+/** Admin panel uses live data; never statically prerender at build time. */
+export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { 
   ShoppingBagIcon, 

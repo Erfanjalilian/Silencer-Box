@@ -17,21 +17,8 @@ interface Article {
 }
 
 async function getArticle(id: string): Promise<Article | null> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/articles/${id}`, {
-      cache: 'no-cache',
-    });
-    
-    if (!response.ok) {
-      return null;
-    }
-    
-    return response.json();
-  } catch (error) {
-    console.error('Error fetching article:', error);
-    return null;
-  }
+  const { getArticleById } = await import('@/lib/data/articles');
+  return getArticleById(id);
 }
 
 export default async function EditArticlePage({ params }: { params: { id: string } }) {

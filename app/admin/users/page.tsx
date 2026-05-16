@@ -14,21 +14,8 @@ interface User {
 }
 
 async function getAllUsers(): Promise<User[]> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/user`, {
-      cache: 'no-cache',
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch users');
-    }
-    
-    return response.json();
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    return [];
-  }
+  const { getAllUsers: loadUsers } = await import('@/lib/data/users');
+  return loadUsers();
 }
 
 function UsersLoading() {

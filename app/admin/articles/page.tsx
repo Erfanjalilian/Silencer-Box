@@ -17,21 +17,8 @@ interface Article {
 }
 
 async function getAllArticles(): Promise<Article[]> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/articles`, {
-      cache: 'no-cache',
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch articles');
-    }
-    
-    return response.json();
-  } catch (error) {
-    console.error('Error fetching articles:', error);
-    return [];
-  }
+  const { readArticles } = await import('@/lib/data/articles');
+  return readArticles();
 }
 
 function ArticlesLoading() {

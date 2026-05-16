@@ -22,26 +22,8 @@ interface Product {
 }
 
 async function getProduct(id: string): Promise<Product | null> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/products`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ id }),
-      cache: 'no-cache',
-    });
-    
-    if (!response.ok) {
-      return null;
-    }
-    
-    return response.json();
-  } catch (error) {
-    console.error('Error fetching product:', error);
-    return null;
-  }
+  const { getProductById } = await import('@/lib/data/products');
+  return getProductById(id);
 }
 
 export default async function EditProductPage({ params }: { params: { id: string } }) {

@@ -30,27 +30,19 @@ interface ProductsResponse {
 }
 
 async function getProducts(searchParams: { [key: string]: string | string[] | undefined }): Promise<ProductsResponse> {
-  const params = new URLSearchParams();
-  params.set('getAll', 'true');
-  
-  if (searchParams.category && searchParams.category !== 'all') {
-    params.set('category', searchParams.category as string);
-  }
-  if (searchParams.minPrice) params.set('minPrice', searchParams.minPrice as string);
-  if (searchParams.maxPrice) params.set('maxPrice', searchParams.maxPrice as string);
-  if (searchParams.inStock) params.set('inStock', searchParams.inStock as string);
-  if (searchParams.sortBy) params.set('sortBy', searchParams.sortBy as string);
-
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  const response = await fetch(`${baseUrl}/api/products?${params.toString()}`, {
-    cache: 'no-cache',
+  const { queryProducts } = await import('@/lib/data/products');
+  return queryProducts({
+    category:
+      typeof searchParams.category === 'string' ? searchParams.category : undefined,
+    minPrice:
+      typeof searchParams.minPrice === 'string' ? searchParams.minPrice : undefined,
+    maxPrice:
+      typeof searchParams.maxPrice === 'string' ? searchParams.maxPrice : undefined,
+    inStock:
+      typeof searchParams.inStock === 'string' ? searchParams.inStock : undefined,
+    sortBy:
+      typeof searchParams.sortBy === 'string' ? searchParams.sortBy : undefined,
   });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch products');
-  }
-
-  return response.json();
 }
 
 // Loading skeleton component

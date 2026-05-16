@@ -40,20 +40,8 @@ interface ProductsResponse {
 
 async function getAllProducts(): Promise<Product[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/products?getAll=true`, {
-      cache: 'force-cache',
-      next: {
-        revalidate: 3600
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch products');
-    }
-    
-    const data: ProductsResponse = await response.json();
-    return data.products || [];
+    const { readProducts } = await import('@/lib/data/products');
+    return readProducts();
   } catch (error) {
     console.error('Error fetching products:', error);
     return [];

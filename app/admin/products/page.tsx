@@ -22,22 +22,8 @@ interface Product {
 }
 
 async function getAllProducts(): Promise<Product[]> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/products?getAll=true`, {
-      cache: 'no-cache',
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch products');
-    }
-    
-    const data = await response.json();
-    return data.products || data;
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    return [];
-  }
+  const { readProducts } = await import('@/lib/data/products');
+  return readProducts();
 }
 
 function ProductsLoading() {

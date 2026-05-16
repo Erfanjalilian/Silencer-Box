@@ -60,24 +60,8 @@ const getIcon = (iconName: string) => {
 };
 
 async function getAboutData(): Promise<AboutData | null> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/about`, {
-      cache: 'force-cache',
-      next: {
-        revalidate: 3600
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch about page data');
-    }
-    
-    return response.json();
-  } catch (error) {
-    console.error('Error fetching about data:', error);
-    return null;
-  }
+  const { getAboutData: loadAbout } = await import('@/lib/data/about');
+  return loadAbout();
 }
 
 // Hero Image Component
