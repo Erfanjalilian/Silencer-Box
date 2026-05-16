@@ -1,12 +1,8 @@
 @import "tailwindcss";
-@font-face {
-  font-family: 'MyFont';
-  src: url('/public/Fonts/Vazir-Medium.woff') format('woff2');
-  
-}
-body{
-  font-family: "MyFont";
+
+body {
   direction: rtl;
+  font-family: Tahoma, "Segoe UI", system-ui, sans-serif;
 }
 @keyframes fadeInUp {
   from {

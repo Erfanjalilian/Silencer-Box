@@ -5,16 +5,25 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { ShoppingCartIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { getCartCount } = useCart();
+  const { user, isAuthenticated, isLoading } = useAuth();
   
   const cartCount = getCartCount();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+  const accountHref = isAuthenticated ? '/dashboard' : '/login';
+  const accountLabel = isLoading
+    ? '…'
+    : isAuthenticated
+      ? 'حساب کاربری'
+      : 'ورود';
 
   return (
     <>
@@ -61,10 +70,22 @@ const Header: React.FC = () => {
                 )}
               </Link>
 
-              {/* User Button */}
-              <button className="hidden sm:block text-gray-300 hover:text-sky-400 transition-colors">
+              {isAuthenticated && user?.role === 'admin' && (
+                <Link
+                  href="/admin/users"
+                  className="hidden sm:inline text-sm text-sky-400/90 hover:text-sky-300 transition-colors"
+                >
+                  مدیریت
+                </Link>
+              )}
+              {/* User account */}
+              <Link
+                href={accountHref}
+                className="hidden sm:inline-flex text-gray-300 hover:text-sky-400 transition-colors"
+                aria-label={accountLabel}
+              >
                 <UserIcon className="h-5 w-5 sm:h-6 sm:w-6" />
-              </button>
+              </Link>
 
               {/* Mobile Menu Button */}
               <button 
@@ -137,11 +158,24 @@ const Header: React.FC = () => {
                 )}
               </Link>
               
-              <div className="pt-6 border-t border-sky-500/30">
-                <button className="w-full flex items-center justify-between text-gray-300 hover:text-sky-400 transition-colors">
-                  <span>حساب کاربری</span>
+              <div className="pt-6 border-t border-sky-500/30 space-y-4">
+                <Link
+                  href={accountHref}
+                  onClick={toggleMobileMenu}
+                  className="w-full flex items-center justify-between text-gray-300 hover:text-sky-400 transition-colors"
+                >
+                  <span>{accountLabel}</span>
                   <UserIcon className="h-5 w-5" />
-                </button>
+                </Link>
+                {isAuthenticated && user?.role === 'admin' && (
+                  <Link
+                    href="/admin/users"
+                    onClick={toggleMobileMenu}
+                    className="block text-gray-300 hover:text-sky-400 transition-colors"
+                  >
+                    پنل مدیریت
+                  </Link>
+                )}
               </div>
             </nav>
           </div>
