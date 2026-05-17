@@ -18,7 +18,7 @@ const Header: React.FC = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const accountHref = isAuthenticated ? '/dashboard' : '/login';
+  const accountHref = isAuthenticated ? (user?.role === 'admin' ? '/admin/users' : '/dashboard') : '/login';
   const accountLabel = isLoading
     ? '…'
     : isAuthenticated
@@ -79,13 +79,26 @@ const Header: React.FC = () => {
                 </Link>
               )}
               {/* User account */}
-              <Link
-                href={accountHref}
-                className="hidden sm:inline-flex text-gray-300 hover:text-sky-400 transition-colors"
-                aria-label={accountLabel}
-              >
-                <UserIcon className="h-5 w-5 sm:h-6 sm:w-6" />
-              </Link>
+              {isAuthenticated && user ? (
+                <Link
+                  href={accountHref}
+                  className="hidden sm:inline-flex items-center gap-2 rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-sm text-sky-100 transition-colors hover:bg-sky-500/20"
+                  aria-label="حساب کاربری"
+                >
+                  <UserIcon className="h-5 w-5" />
+                  <span className="truncate max-w-[8rem] text-sm text-sky-100">
+                    {user.firstName ? `${user.firstName} ${user.lastName}` : user.phone}
+                  </span>
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  className="hidden sm:inline-flex text-gray-300 hover:text-sky-400 transition-colors"
+                  aria-label="ورود"
+                >
+                  <UserIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                </Link>
+              )}
 
               {/* Mobile Menu Button */}
               <button 
@@ -164,7 +177,13 @@ const Header: React.FC = () => {
                   onClick={toggleMobileMenu}
                   className="w-full flex items-center justify-between text-gray-300 hover:text-sky-400 transition-colors"
                 >
-                  <span>{accountLabel}</span>
+                  <span>
+                  {isAuthenticated && user
+                    ? user.firstName
+                      ? `${user.firstName} ${user.lastName}`
+                      : user.phone
+                    : accountLabel}
+                </span>
                   <UserIcon className="h-5 w-5" />
                 </Link>
                 {isAuthenticated && user?.role === 'admin' && (

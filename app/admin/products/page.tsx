@@ -66,7 +66,7 @@ export default async function AdminProductsPage() {
               مدیریت محصولات
             </h1>
             <p className="text-gray-400">
-              مدیریت، ویرایش و افزودن محصولات فروشگاه
+              مدیریت و افزودن محصولات فروشگاه
             </p>
           </div>
           <Link

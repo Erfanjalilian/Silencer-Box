@@ -18,10 +18,11 @@ interface AuthContextValue {
   isLoading: boolean;
   login: () => void;
   logout: () => Promise<void>;
-  refreshUser: () => Promise<void>;
+  refreshUser: () => Promise<AuthUser | null>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+const AUTH_USER_STORAGE_KEY = "authUser";
 
 async function fetchMe(): Promise<AuthUser | null> {
   const res = await fetch("/api/auth/me", {
@@ -33,30 +34,64 @@ async function fetchMe(): Promise<AuthUser | null> {
   return data.user ?? null;
 }
 
+function readStoredUser(): AuthUser | null {
+  if (typeof window === "undefined") return null;
+  const raw = localStorage.getItem(AUTH_USER_STORAGE_KEY);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as AuthUser;
+  } catch {
+    localStorage.removeItem(AUTH_USER_STORAGE_KEY);
+    return null;
+  }
+}
+
+function writeStoredUser(user: AuthUser | null) {
+  if (typeof window === "undefined") return;
+  if (user) {
+    localStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(user));
+  } else {
+    localStorage.removeItem(AUTH_USER_STORAGE_KEY);
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const setUserAndStore = useCallback((nextUser: AuthUser | null) => {
+    setUser(nextUser);
+    writeStoredUser(nextUser);
+  }, []);
+
   const refreshUser = useCallback(async () => {
     const u = await fetchMe();
-    setUser(u);
-  }, []);
+    setUserAndStore(u);
+    return u;
+  }, [setUserAndStore]);
 
   useEffect(() => {
     let cancelled = false;
     setIsLoading(true);
+
     void (async () => {
+      const storedUser = readStoredUser();
+      if (storedUser && !cancelled) {
+        setUser(storedUser);
+      }
+
       const u = await fetchMe();
       if (!cancelled) {
-        setUser(u);
+        setUserAndStore(u);
         setIsLoading(false);
       }
     })();
+
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [setUserAndStore]);
 
   const login = useCallback(() => {
     router.push("/login");
@@ -67,9 +102,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       method: "POST",
       credentials: "same-origin",
     });
-    setUser(null);
+    setUserAndStore(null);
     router.push("/");
-  }, [router]);
+  }, [router, setUserAndStore]);
 
   const value = useMemo<AuthContextValue>(
     () => ({

@@ -12,9 +12,11 @@ function randomOtp(): string {
   return String(Math.floor(100000 + Math.random() * 900000));
 }
 
+const DEFAULT_SMS_IR_VERIFY_TEMPLATE_ID = 368405;
+
 function parseTemplateId(): number | null {
   const raw = process.env.SMS_IR_VERIFY_TEMPLATE_ID?.trim();
-  if (!raw) return null;
+  if (!raw) return DEFAULT_SMS_IR_VERIFY_TEMPLATE_ID;
   const n = Number(raw);
   return Number.isFinite(n) && n > 0 ? n : null;
 }

@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
-import type { MockOrder, OrderStatus } from "@/types/dashboard";
-import { getMockOrders } from "@/lib/dashboard/mock-orders";
+import React, { useState } from "react";
+import type { Order, OrderStatus } from "@/types/dashboard";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/app/components/ui/Button";
 import { TextField } from "@/app/components/ui/TextField";
@@ -39,12 +38,51 @@ function statusBadgeClass(s: OrderStatus): string {
 
 export default function DashboardClient() {
   const { user, refreshUser, logout } = useAuth();
-  const [orders, setOrders] = useState<MockOrder[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [ordersError, setOrdersError] = useState<string | null>(null);
+  const [ordersLoading, setOrdersLoading] = useState(false);
 
   React.useEffect(() => {
-    if (user?.id) {
-      setOrders(getMockOrders(user.id));
-    }
+    if (!user?.id) return;
+
+    let cancelled = false;
+
+    void (async () => {
+      if (!cancelled) {
+        setOrdersLoading(true);
+        setOrdersError(null);
+      }
+
+      try {
+        const res = await fetch("/api/orders", {
+          cache: "no-store",
+          credentials: "same-origin",
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          setOrdersError(
+            typeof data.error === "string"
+              ? data.error
+              : "خطا در بارگذاری سفارش‌ها",
+          );
+          return;
+        }
+
+        setOrders(Array.isArray(data.orders) ? data.orders : []);
+      } catch {
+        if (!cancelled) {
+          setOrdersError("ارتباط با سرور برقرار نشد.");
+        }
+      } finally {
+        if (!cancelled) {
+          setOrdersLoading(false);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [user?.id]);
 
   const [profileDraft, setProfileDraft] = useState({
@@ -54,10 +92,12 @@ export default function DashboardClient() {
   });
 
   React.useEffect(() => {
-    setProfileDraft({
-      firstName: user?.firstName ?? "",
-      lastName: user?.lastName ?? "",
-      email: user?.email ?? "",
+    void Promise.resolve().then(() => {
+      setProfileDraft({
+        firstName: user?.firstName ?? "",
+        lastName: user?.lastName ?? "",
+        email: user?.email ?? "",
+      });
     });
   }, [user?.firstName, user?.lastName, user?.email]);
 
@@ -69,17 +109,6 @@ export default function DashboardClient() {
   const [phoneStep, setPhoneStep] = useState<"idle" | "sent">("idle");
   const [phoneBusy, setPhoneBusy] = useState(false);
   const [phoneErr, setPhoneErr] = useState<string | null>(null);
-
-  const [returnOrderId, setReturnOrderId] = useState("");
-  const [returnReason, setReturnReason] = useState("");
-  const [returns, setReturns] = useState<{ id: string; summary: string }[]>(
-    [],
-  );
-
-  const orderOptions = useMemo(
-    () => orders.map((o) => ({ id: o.id, label: `${o.id} — ${o.itemsSummary}` })),
-    [orders],
-  );
 
   const saveProfile = async () => {
     setProfileMsg(null);
@@ -162,28 +191,27 @@ export default function DashboardClient() {
     }
   };
 
-  const cancelOrder = (orderId: string) => {
+  const cancelOrder = async (orderId: string) => {
+    const previousOrders = orders;
     setOrders((prev) =>
       prev.map((o) =>
-        o.id === orderId
-          ? { ...o, status: "cancelled" as const }
-          : o,
+        o.id === orderId ? { ...o, status: "cancelled" } : o,
       ),
     );
-  };
 
-  const submitReturn = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!returnOrderId.trim() || !returnReason.trim()) return;
-    setReturns((r) => [
-      {
-        id: `RET-${Date.now()}`,
-        summary: `${returnOrderId}: ${returnReason}`,
-      },
-      ...r,
-    ]);
-    setReturnOrderId("");
-    setReturnReason("");
+    try {
+      const res = await fetch(`/api/orders/${encodeURIComponent(orderId)}`, {
+        method: "PATCH",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "cancelled" }),
+      });
+      if (!res.ok) {
+        throw new Error("failed");
+      }
+    } catch {
+      setOrders(previousOrders);
+    }
   };
 
   if (!user) {
@@ -196,7 +224,7 @@ export default function DashboardClient() {
         <div className="space-y-2">
           <h1 className="text-2xl font-bold text-gray-100">پنل کاربری</h1>
           <p className="text-gray-400">
-            این بخش با دادهٔ آزمایشی کار می‌کند؛ بعداً می‌توانید به API یا پایگاه داده وصل کنید.
+            اطلاعات شما و سفارش‌ها از API دریافت می‌شوند. وضعیت ورود تا زمان خروج در مرورگر ذخیره می‌شود.
           </p>
         </div>
         <Button variant="ghost" type="button" onClick={() => void logout()}>
@@ -301,11 +329,25 @@ export default function DashboardClient() {
 
       {/* Orders */}
       <section className="rounded-2xl border border-gray-700 bg-gray-900/60 p-6 shadow-lg">
-        <h2 className="mb-4 text-lg font-semibold text-gray-100">
-          تاریخچه سفارش‌ها (نمونه)
-        </h2>
-        <div className="space-y-3">
-          {orders.map((o) => (
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-100">
+              تاریخچه سفارش‌ها
+            </h2>
+          </div>
+          {ordersLoading && (
+            <div className="rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-sm text-sky-200">
+              در حال بارگذاری...
+            </div>
+          )}
+        </div>
+        {ordersError ? (
+          <div className="rounded-lg border border-red-500/40 bg-red-950/40 px-3 py-2 text-sm text-red-200">
+            {ordersError}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {orders.map((o) => (
             <div
               key={o.id}
               className="flex flex-col gap-3 rounded-xl border border-gray-700/80 bg-gray-950/30 p-4 md:flex-row md:items-center md:justify-between"
@@ -339,55 +381,7 @@ export default function DashboardClient() {
             </div>
           ))}
         </div>
-      </section>
-
-      {/* Returns */}
-      <section className="rounded-2xl border border-gray-700 bg-gray-900/60 p-6 shadow-lg">
-        <h2 className="mb-4 text-lg font-semibold text-gray-100">
-          درخواست مرجوعی (نمونه)
-        </h2>
-        <form onSubmit={submitReturn} className="grid gap-4 md:grid-cols-2">
-          <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-gray-300">
-              سفارش
-            </span>
-            <select
-              className="w-full rounded-lg border border-gray-600 bg-gray-900/80 px-3 py-2.5 text-gray-100 outline-none focus:ring-2 focus:ring-sky-500/40"
-              value={returnOrderId}
-              onChange={(e) => setReturnOrderId(e.target.value)}
-            >
-              <option value="">انتخاب کنید</option>
-              {orderOptions.map((o) => (
-                <option key={o.id} value={o.id}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <TextField
-            label="دلیل مرجوعی"
-            value={returnReason}
-            onChange={(e) => setReturnReason(e.target.value)}
-          />
-          <div className="md:col-span-2">
-            <Button variant="secondary" type="submit">
-              ثبت درخواست
-            </Button>
-          </div>
-        </form>
-        {returns.length > 0 && (
-          <ul className="mt-6 space-y-2 text-sm text-gray-300">
-            {returns.map((r) => (
-              <li
-                key={r.id}
-                className="rounded-lg border border-gray-700 bg-gray-950/40 px-3 py-2"
-              >
-                <span className="font-mono text-xs text-gray-500">{r.id}</span>{" "}
-                {r.summary}
-              </li>
-            ))}
-          </ul>
-        )}
+      )}
       </section>
     </div>
   );

@@ -9,7 +9,7 @@ function LoginFallback() {
 
 export default function LoginPage() {
   return (
-    <main className="flex flex-1 flex-col justify-center px-4 py-16">
+    <main className="flex-1 flex flex-col items-center justify-center bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 px-4 py-10 sm:px-6 lg:px-8">
       <Suspense fallback={<LoginFallback />}>
         <LoginForm />
       </Suspense>

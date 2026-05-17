@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { PencilIcon, TrashIcon, EyeIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, EyeIcon } from '@heroicons/react/24/outline';
 
 interface Product {
   id: string;
@@ -125,12 +125,6 @@ const AdminProductsClient: React.FC<AdminProductsClientProps> = ({ initialProduc
                   </td>
                   <td className="p-4">
                     <div className="flex gap-2">
-                      <Link
-                        href={`/admin/products/edit/${product.id}`}
-                        className="p-2 text-sky-400 hover:bg-sky-500/10 rounded-lg transition-colors"
-                      >
-                        <PencilIcon className="h-5 w-5" />
-                      </Link>
                       <button
                         onClick={() => {
                           setSelectedProduct(product);

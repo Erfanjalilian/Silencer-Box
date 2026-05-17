@@ -90,35 +90,9 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    const { id } = await params;
-    const body = await request.json();
-    
-    let productsData = getProducts();
-    const index = productsData.findIndex(p => p.id === id);
-    
-    if (index === -1) {
-      return NextResponse.json(
-        { error: 'Product not found' },
-        { status: 404 }
-      );
-    }
-    
-    const updatedProduct = {
-      ...productsData[index],
-      ...body,
-      id: id,
-    };
-    
-    productsData[index] = updatedProduct;
-    saveProducts(productsData);
-    
-    return NextResponse.json(updatedProduct, { status: 200 });
-  } catch (error) {
-    console.error('Error in PUT:', error);
-    return NextResponse.json(
-      { error: 'Failed to update product' },
-      { status: 500 }
-    );
-  }
+  // Editing products via API is disabled. Return 405 Method Not Allowed.
+  return NextResponse.json(
+    { error: 'Editing products is disabled' },
+    { status: 405 }
+  );
 }

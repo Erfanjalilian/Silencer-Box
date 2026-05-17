@@ -54,9 +54,10 @@ export async function POST(request: NextRequest) {
       const payload = buildSessionPayload(phone, prof);
       const token = await createSessionToken(payload);
 
+      const redirectTo = payload.role === 'admin' ? '/admin/users' : '/dashboard';
       const res = NextResponse.json({
         ok: true,
-        redirectTo: "/dashboard",
+        redirectTo,
         user: sessionToAuthUser(payload),
       });
       await setAuthCookie(res, token);
